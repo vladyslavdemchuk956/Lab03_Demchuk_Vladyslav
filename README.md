@@ -49,6 +49,9 @@
    Результат: `report.html` і `slides.html` у корені, а також оновлені `figures/` і `results/`.
    Збирання триває ≈ 30 с. Усі випадкові кроки мають `seed = 42`.
 
+   **Windows, одна команда:** `powershell -ExecutionPolicy Bypass -File .\build.ps1` — скрипт сам знайде
+   Quarto і Python (або `.venv`), збере звіт і слайди та відкриє `report.html`.
+
 > Якщо Quarto бере не той Python, вкажіть його явно: `set QUARTO_PYTHON=.venv\Scripts\python.exe`
 > (macOS/Linux: `export QUARTO_PYTHON=.venv/bin/python`).
 

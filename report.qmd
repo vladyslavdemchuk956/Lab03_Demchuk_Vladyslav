@@ -26,21 +26,20 @@ jupyter: python3
 ```{python}
 #| label: setup
 #| code-summary: "Пакети й налаштування"
-import hashlib, json, os, warnings
+import hashlib
+import json
+import os
+import warnings
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import scipy.stats as stats
 import statsmodels.formula.api as smf
 from statsmodels.stats.diagnostic import het_breuschpagan
 from statsmodels.stats.outliers_influence import OLSInfluence
-from sklearn.model_selection import train_test_split, KFold, cross_validate
-from sklearn.pipeline import make_pipeline
-from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
-from sklearn.preprocessing import (OneHotEncoder, OrdinalEncoder, FunctionTransformer,
-                                   SplineTransformer, PolynomialFeatures)
-from sklearn.linear_model import LinearRegression
-from sklearn.dummy import DummyRegressor
+from sklearn.model_selection import train_test_split, KFold
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
 from IPython.display import Markdown
@@ -50,17 +49,21 @@ sns.set_theme(style="whitegrid")
 SEED = 42
 os.makedirs("figures", exist_ok=True)
 os.makedirs("results", exist_ok=True)
-
-def savefig(name):
-    plt.savefig(f"figures/{name}.png", dpi=150, bbox_inches="tight")
-
-def rnd(x, n=None):
-    return round(float(x)) if n is None else round(float(x), n)
-
-def usd(v):
-    return f"{v:,.0f}".replace(",", " ") + " $"
-
 KEY = {}
+
+
+def save_figure(name):
+    plt.savefig("figures/" + name + ".png", dpi=150, bbox_inches="tight")
+
+
+def rnd(x, digits=0):
+    if digits == 0:
+        return int(round(float(x)))
+    return round(float(x), digits)
+
+
+def usd(value):
+    return f"{value:,.0f}".replace(",", " ") + " $"
 ```
 
 # Вступ
@@ -125,19 +128,27 @@ sha = hashlib.sha256(open(RAW, "rb").read()).hexdigest()
 raw = pd.read_csv(RAW)
 
 df = raw.drop_duplicates()
-df = df[(df.x > 0) & (df.y > 0) & (df.z > 0)]
-depth_calc = df.z / ((df.x + df.y) / 2) * 100
-df = df[(depth_calc - df.depth).abs() <= 5].reset_index(drop=True)
+df = df[(df["x"] > 0) & (df["y"] > 0) & (df["z"] > 0)]
+depth_from_size = df["z"] / ((df["x"] + df["y"]) / 2) * 100
+df = df[(depth_from_size - df["depth"]).abs() <= 5]
+df = df.reset_index(drop=True)
 
-CATS = {"cut": ["Fair", "Good", "Very Good", "Premium", "Ideal"],
-        "color": ["J", "I", "H", "G", "F", "E", "D"],
-        "clarity": ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"]}
-for c, lv in CATS.items():
-    df[c] = pd.Categorical(df[c], categories=lv, ordered=True)
-df["log_price"] = np.log(df.price)
-df["log_carat"] = np.log(df.carat)
-KEY.update(n_raw=len(raw), n_clean=len(df), sha=sha)
-print(f"Рядків у файлі: {len(raw)}, після очищення: {len(df)}; SHA-256: {sha[:16]}…")
+cut_order = ["Fair", "Good", "Very Good", "Premium", "Ideal"]
+color_order = ["J", "I", "H", "G", "F", "E", "D"]
+clarity_order = ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"]
+df["cut"] = pd.Categorical(df["cut"], categories=cut_order, ordered=True)
+df["color"] = pd.Categorical(df["color"], categories=color_order, ordered=True)
+df["clarity"] = pd.Categorical(df["clarity"], categories=clarity_order, ordered=True)
+
+df["log_price"] = np.log(df["price"])
+df["log_carat"] = np.log(df["carat"])
+
+KEY["n_raw"] = len(raw)
+KEY["n_clean"] = len(df)
+KEY["sha"] = sha
+print("Рядків у файлі:", len(raw))
+print("Рядків після очищення:", len(df))
+print("SHA-256 файлу:", sha)
 ```
 
 - **Джерело:** набір `diamonds` з пакета ggplot2 [@ggplot2], файл `data-raw/diamonds.csv` з репозиторію
@@ -160,11 +171,13 @@ print(f"Рядків у файлі: {len(raw)}, після очищення: {le
 ```{python}
 #| label: split
 train, test = train_test_split(df, test_size=0.2, random_state=SEED)
-FEATS = ["carat", "cut", "color", "clarity"]
-X_tr, y_tr = train[FEATS], train.price
-X_te, y_te = test[FEATS], test.price
-pd.DataFrame({"частина": ["навчальна", "тестова"], "рядків": [len(train), len(test)],
-              "середня ціна, $": [rnd(y_tr.mean()), rnd(y_te.mean())]})
+
+split_table = pd.DataFrame({
+    "частина": ["навчальна", "тестова"],
+    "рядків": [len(train), len(test)],
+    "середня ціна, $": [rnd(train["price"].mean()), rnd(test["price"].mean())],
+})
+split_table
 ```
 
 - Усі графіки розділу 2.3 і всю діагностику я побудував **тільки на навчальній частині**.
@@ -175,8 +188,10 @@ pd.DataFrame({"частина": ["навчальна", "тестова"], "ря�
 - **Доступність предикторів.** 4C вказані в сертифікаті до продажу, тож вони відомі на момент прогнозу.
   Ціну я ніде не використовую як предиктор.
 - **Перехресна валідація:** 5-кратна `KFold(shuffle=True, random_state=42)` на навчальній частині,
-  **однакові розбиття для всіх моделей**. Кодування категорій, логарифмування, сплайни й пороги
-  входять у `Pipeline`, тож на кожному розбитті вони будуються лише за його навчальною частиною.
+  **однакові розбиття для всіх моделей**. Кожну модель на кожному розбитті я навчаю тільки на його
+  навчальній частині, а помилку рахую на валідаційній. Лінійні моделі задані формулами `statsmodels`:
+  кодування категорій і вузли сплайна визначаються лише за навчальною частиною розбиття, а логарифми й
+  пороги ваги рахуються для кожного рядка окремо і нічого не беруть з інших даних.
   Пропусків немає, тож імпутація не потрібна; масштабування лінійній регресії без штрафу не потрібне.
 
 ## Що з EDA переношу в моделювання
@@ -185,34 +200,47 @@ pd.DataFrame({"частина": ["навчальна", "тестова"], "ря�
 #| label: fig-eda
 #| fig-cap: "EDA на навчальній частині. Ліворуч: ціна має сильну праву асиметрію, після логарифма розподіл майже симетричний (кілька піків — популярні ваги каменів). Праворуч: у шкалі log–log ціна майже лінійно залежить від ваги, але видно вертикальні «сходинки» на 0.5, 1, 1.5 і 2 ct."
 fig, ax = plt.subplots(1, 3, figsize=(15, 4.2))
-sns.histplot(train.price, bins=60, ax=ax[0], color="steelblue")
+
+sns.histplot(train["price"], bins=60, ax=ax[0], color="steelblue")
 ax[0].set(title="Ціна", xlabel="Ціна, $", ylabel="Кількість діамантів")
-sns.histplot(train.log_price, bins=60, ax=ax[1], color="seagreen")
+
+sns.histplot(train["log_price"], bins=60, ax=ax[1], color="seagreen")
 ax[1].set(title="Логарифм ціни", xlabel="ln(ціна, $)", ylabel="")
-ax[2].scatter(train.carat, train.price, s=2, alpha=0.08)
+
+ax[2].scatter(train["carat"], train["price"], s=2, alpha=0.08)
 ax[2].set(xscale="log", yscale="log", title="Ціна і вага (log–log)",
           xlabel="Вага, ct (log)", ylabel="Ціна, $ (log)")
-for t in (0.5, 1, 1.5, 2):
-    ax[2].axvline(t, color="red", lw=0.8, ls="--")
+for weight in [0.5, 1, 1.5, 2]:
+    ax[2].axvline(weight, color="red", lw=0.8, ls="--")
 ax[2].minorticks_off()
 ax[2].set_xticks([0.2, 0.3, 0.5, 1, 2, 3, 5], ["0.2", "0.3", "0.5", "1", "2", "3", "5"])
 ax[2].set_yticks([500, 1000, 2000, 5000, 10000], ["500", "1000", "2000", "5000", "10000"])
-plt.tight_layout(); savefig("01_eda_target"); plt.show()
-KEY["skew_price"] = rnd(train.price.skew(), 2)
-KEY["skew_log"] = rnd(train.log_price.skew(), 2)
+
+plt.tight_layout()
+save_figure("01_eda_target")
+plt.show()
+
+KEY["skew_price"] = rnd(train["price"].skew(), 2)
+KEY["skew_log"] = rnd(train["log_price"].skew(), 2)
 ```
 
 ```{python}
 #| label: fig-eda-clarity
 #| fig-cap: "Медіанна ціна за чистотою: без контролю ваги (ліворуч) найчистіші камені здаються дешевшими; серед каменів 0.9–1.1 ct (праворуч) ціна чітко зростає з чистотою. Отже, ефекти якості треба оцінювати за сталої ваги."
 fig, ax = plt.subplots(1, 2, figsize=(12, 4))
-m_all = train.groupby("clarity", observed=True).price.median()
-m_1ct = train[train.carat.between(0.9, 1.1)].groupby("clarity", observed=True).price.median()
-ax[0].bar(m_all.index.astype(str), m_all.values, color="lightgray")
+
+median_all = train.groupby("clarity", observed=True)["price"].median()
+one_carat = train[(train["carat"] >= 0.9) & (train["carat"] <= 1.1)]
+median_1ct = one_carat.groupby("clarity", observed=True)["price"].median()
+
+ax[0].bar(median_all.index.astype(str), median_all.values, color="lightgray")
 ax[0].set(title="Усі камені", xlabel="Чистота (від гіршої до кращої)", ylabel="Медіанна ціна, $")
-ax[1].bar(m_1ct.index.astype(str), m_1ct.values, color="steelblue")
+ax[1].bar(median_1ct.index.astype(str), median_1ct.values, color="steelblue")
 ax[1].set(title="Камені 0.9–1.1 ct", xlabel="Чистота (від гіршої до кращої)", ylabel="")
-plt.tight_layout(); savefig("02_eda_clarity"); plt.show()
+
+plt.tight_layout()
+save_figure("02_eda_clarity")
+plt.show()
 ```
 
 Найважливіші висновки з лабораторної №2, перевірені тут на навчальній частині:
@@ -242,53 +270,57 @@ plt.tight_layout(); savefig("02_eda_clarity"); plt.show()
 
 ```{python}
 #| label: models
-#| code-summary: "Опис усіх моделей (однаковий протокол)"
-def onehot():
-    return OneHotEncoder(categories=[CATS[c] for c in ["cut", "color", "clarity"]], drop="first")
+#| code-summary: "Усі моделі: формули і функція прогнозу"
+QUALITY = "C(cut) + C(color) + C(clarity)"
+SPLINE = "bs(log_carat, df=6, lower_bound=-2.5, upper_bound=2)"
+STEPS = "I(carat >= 0.5) + I(carat >= 1) + I(carat >= 1.5) + I(carat >= 2)"
 
-def thresholds(c):
-    c = np.asarray(c).ravel()
-    return np.column_stack([c >= t for t in (0.5, 1.0, 1.5, 2.0)]).astype(float)
-
-QUAL = ["cut", "color", "clarity"]
-log_target = lambda est: TransformedTargetRegressor(est, func=np.log, inverse_func=np.exp)
-
-MODELS = {
-    "M0 константа (середнє)": DummyRegressor(strategy="mean"),
-    "M1 лінійна, ціна в $": make_pipeline(
-        ColumnTransformer([("w", "passthrough", ["carat"]), ("q", onehot(), QUAL)]),
-        LinearRegression()),
-    "M2 лінійна log–log": log_target(make_pipeline(
-        ColumnTransformer([("w", FunctionTransformer(np.log), ["carat"]), ("q", onehot(), QUAL)]),
-        LinearRegression())),
-    "M3 log–log + сплайн і пороги ваги": log_target(make_pipeline(
-        ColumnTransformer([
-            ("s", make_pipeline(FunctionTransformer(np.log), SplineTransformer(n_knots=6, degree=3)), ["carat"]),
-            ("t", FunctionTransformer(thresholds), ["carat"]),
-            ("q", onehot(), QUAL)]),
-        LinearRegression())),
-    "M4 = M3 + взаємодії вага×колір, вага×чистота": log_target(make_pipeline(
-        ColumnTransformer([
-            ("s", make_pipeline(FunctionTransformer(np.log), SplineTransformer(n_knots=6, degree=3)), ["carat"]),
-            ("t", FunctionTransformer(thresholds), ["carat"]),
-            ("q", onehot(), QUAL),
-            ("ix", make_pipeline(
-                ColumnTransformer([("w", FunctionTransformer(np.log), ["carat"]),
-                                   ("q", OneHotEncoder(categories=[CATS["color"], CATS["clarity"]], drop="first"),
-                                    ["color", "clarity"])]),
-                PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)),
-             ["carat", "color", "clarity"])]),
-        LinearRegression())),
-    "M5 градієнтний бустинг (додатково)": log_target(make_pipeline(
-        ColumnTransformer([("w", "passthrough", ["carat"]),
-                           ("q", OrdinalEncoder(categories=[CATS[c] for c in QUAL]), QUAL)]),
-        HistGradientBoostingRegressor(random_state=SEED))),
+FORMULAS = {
+    "M1": "price ~ carat + " + QUALITY,
+    "M2": "log_price ~ log_carat + " + QUALITY,
+    "M3": "log_price ~ " + SPLINE + " + " + STEPS + " + " + QUALITY,
+    "M4": "log_price ~ " + SPLINE + " + " + STEPS + " + C(cut) + C(color) * C(clarity)",
 }
+
+MODEL_NAMES = {
+    "M0": "M0 константа (середнє)",
+    "M1": "M1 лінійна, ціна в $",
+    "M2": "M2 лінійна log–log",
+    "M3": "M3 log–log + сплайн і пороги ваги",
+    "M4": "M4 = M3 + взаємодія колір×чистота",
+    "M5": "M5 градієнтний бустинг (додатково)",
+}
+
+
+def boosting_features(data):
+    return pd.DataFrame({
+        "carat": data["carat"],
+        "cut": data["cut"].cat.codes,
+        "color": data["color"].cat.codes,
+        "clarity": data["clarity"].cat.codes,
+    })
+
+
+def predict_price(code, fit_data, new_data):
+    if code == "M0":
+        return np.full(len(new_data), fit_data["price"].mean())
+
+    if code == "M5":
+        booster = HistGradientBoostingRegressor(random_state=SEED)
+        booster.fit(boosting_features(fit_data), fit_data["log_price"])
+        return np.exp(booster.predict(boosting_features(new_data)))
+
+    formula = FORMULAS[code]
+    model = smf.ols(formula, data=fit_data).fit()
+    prediction = np.asarray(model.predict(new_data))
+    if formula.startswith("log_price"):
+        prediction = np.exp(prediction)
+    return prediction
 ```
 
 ## Орієнтир: константний прогноз
 
-M0 завжди прогнозує середню ціну навчальної частини, `{python} usd(y_tr.mean())`. Це точність
+M0 завжди прогнозує середню ціну навчальної частини, `{python} usd(train["price"].mean())`. Це точність
 «без жодних предикторів»: будь-яка корисна модель має бути помітно кращою (результати в @tbl-cv).
 
 ## Базова регресія
@@ -299,12 +331,16 @@ $price = \beta_0 + \beta_1\,carat + \text{cut} + \text{color} + \text{clarity} +
 ```{python}
 #| label: fig-m1-resid
 #| fig-cap: "M1 (ціна в $): залишки проти прогнозів. Видно дугу (нелінійність), «лійку» (розкид зростає з ціною) і від'ємні прогнози для дрібних каменів."
-m1 = smf.ols("price ~ carat + C(cut) + C(color) + C(clarity)", data=train).fit()
+m1 = smf.ols(FORMULAS["M1"], data=train).fit()
+
 fig, ax = plt.subplots(figsize=(7.5, 4))
 ax.scatter(m1.fittedvalues, m1.resid, s=2, alpha=0.1)
 ax.axhline(0, color="red")
 ax.set(xlabel="Прогноз, $", ylabel="Залишок, $", title="M1: залишки проти прогнозів")
-plt.tight_layout(); savefig("03_m1_residuals"); plt.show()
+plt.tight_layout()
+save_figure("03_m1_residuals")
+plt.show()
+
 KEY["m1_neg"] = int((m1.fittedvalues < 0).sum())
 ```
 
@@ -320,34 +356,42 @@ OLS зі стійкими до гетероскедастичності похи
 ```{python}
 #| label: tbl-m2
 #| tbl-cap: "M2: ключові коефіцієнти, 95 % ДІ (HC3) і надбавка до ціни за сталих інших змінних"
-trc = train.copy()
-m2 = smf.ols("log_price ~ log_carat + C(cut) + C(color) + C(clarity)", data=trc).fit(cov_type="HC3")
+m2 = smf.ols(FORMULAS["M2"], data=train).fit(cov_type="HC3")
 ci = m2.conf_int()
-coef = pd.DataFrame({"β": m2.params, "ДІ 2.5 %": ci[0], "ДІ 97.5 %": ci[1]})
-coef["надбавка, %"] = (np.exp(coef["β"]) - 1) * 100
-coef["ДІ надбавки, %"] = [f"{(np.exp(a)-1)*100:.0f} … {(np.exp(b)-1)*100:.0f}" for a, b in zip(ci[0], ci[1])]
-coef.loc["log_carat", ["надбавка, %", "ДІ надбавки, %"]] = [np.nan, "еластичність"]
-coef.loc["Intercept", ["надбавка, %", "ДІ надбавки, %"]] = [np.nan, "ln ціни базового каменя 1 ct"]
-coef.index = [i.replace("C(", "").replace(")[T.", " = ").replace("]", "") for i in coef.index]
-coef.round(3).to_csv("results/m2_coefficients.csv")
-b1, b1_lo, b1_hi = m2.params["log_carat"], ci.loc["log_carat", 0], ci.loc["log_carat", 1]
-cl = m2.params.filter(like="clarity")
-cl_lo, cl_hi = ci.loc[cl.index, 0], ci.loc[cl.index, 1]
-KEY.update(b1=rnd(b1, 3), b1_lo=rnd(b1_lo, 3), b1_hi=rnd(b1_hi, 3),
-           r2_m2=rnd(m2.rsquared, 4),
-           if_prem=rnd((np.exp(cl.iloc[-1]) - 1) * 100),
-           if_lo=rnd((np.exp(cl_lo.iloc[-1]) - 1) * 100), if_hi=rnd((np.exp(cl_hi.iloc[-1]) - 1) * 100),
-           si2_prem=rnd((np.exp(cl.iloc[0]) - 1) * 100),
-           clar_monotone=bool(np.all(np.diff(np.r_[0, cl.values]) > 0)),
-           d_prem=rnd((np.exp(m2.params.filter(like="color").iloc[-1]) - 1) * 100),
-           ideal_prem=rnd((np.exp(m2.params.filter(like="cut").iloc[-1]) - 1) * 100))
-coef.drop(columns="надбавка, %").round(3)
+
+coef = pd.DataFrame({
+    "β": m2.params,
+    "ДІ 2.5 %": ci[0],
+    "ДІ 97.5 %": ci[1],
+    "надбавка, %": (np.exp(m2.params) - 1) * 100,
+})
+coef.loc[["Intercept", "log_carat"], "надбавка, %"] = np.nan
+coef = coef.round(3)
+coef.to_csv("results/m2_coefficients.csv")
+
+b1 = m2.params["log_carat"]
+clarity_terms = ["C(clarity)[T." + level + "]" for level in clarity_order[1:]]
+clarity_beta = m2.params[clarity_terms]
+
+KEY["b1"] = rnd(b1, 3)
+KEY["b1_lo"] = rnd(ci.loc["log_carat", 0], 3)
+KEY["b1_hi"] = rnd(ci.loc["log_carat", 1], 3)
+KEY["r2_m2"] = rnd(m2.rsquared, 4)
+KEY["si2_prem"] = rnd((np.exp(m2.params["C(clarity)[T.SI2]"]) - 1) * 100)
+KEY["if_prem"] = rnd((np.exp(m2.params["C(clarity)[T.IF]"]) - 1) * 100)
+KEY["if_lo"] = rnd((np.exp(ci.loc["C(clarity)[T.IF]", 0]) - 1) * 100)
+KEY["if_hi"] = rnd((np.exp(ci.loc["C(clarity)[T.IF]", 1]) - 1) * 100)
+KEY["clar_monotone"] = bool(clarity_beta.is_monotonic_increasing and (clarity_beta > 0).all())
+KEY["d_prem"] = rnd((np.exp(m2.params["C(color)[T.D]"]) - 1) * 100)
+KEY["ideal_prem"] = rnd((np.exp(m2.params["C(cut)[T.Ideal]"]) - 1) * 100)
+
+coef
 ```
 
 **Інтерпретація в одиницях задачі** ($R^2$ на шкалі логарифма = `{python} KEY["r2_m2"]`):
 
 - **Вага:** $\hat\beta_1 =$ `{python} KEY["b1"]` (95 % ДІ `{python} KEY["b1_lo"]`–`{python} KEY["b1_hi"]`).
-  Камінь на 1 % важчий коштує в середньому на ≈ `{python} rnd(KEY["b1"], 2)` % дорожче. Камінь, удвічі
+  Камінь на 1 % важчий коштує в середньому на ≈ `{python} rnd(b1, 2)` % дорожче. Камінь, удвічі
   важчий за ту саму якість, коштує в $2^{\hat\beta_1} \approx$ `{python} rnd(2 ** b1, 1)` раза більше.
 - **Чистота:** порівняно з I1 надбавка зростає від `{python} KEY["si2_prem"]` % (SI2) до
   `{python} KEY["if_prem"]` % (IF, 95 % ДІ `{python} KEY["if_lo"]`–`{python} KEY["if_hi"]` %).
@@ -360,43 +404,59 @@ coef.drop(columns="надбавка, %").round(3)
 #| label: fig-m2-diag
 #| fig-cap: "Діагностика M2. (а) Залишки проти прогнозів: дуги й лійки M1 майже немає. (б) Середній залишок за вагою: систематична хвиля від −0.12 до +0.11 зі зламами біля 0.5, 1, 1.5 і 2 ct. (в) Q–Q графік: правий хвіст важчий за нормальний."
 fig, ax = plt.subplots(1, 3, figsize=(16, 4.3))
+
 ax[0].scatter(m2.fittedvalues, m2.resid, s=2, alpha=0.08)
 ax[0].axhline(0, color="red")
 ax[0].set(xlabel="Прогноз ln(ціна)", ylabel="Залишок", title="(а) Залишки проти прогнозів")
-bins = np.round(np.arange(0.2, 2.31, 0.05), 2)
-grp = pd.cut(train.carat, bins)
-rb = m2.resid.groupby(grp, observed=True).agg(["mean", "size"])
-rb = rb[rb["size"] >= 30]
-ax[1].plot([iv.mid for iv in rb.index], rb["mean"], marker="o", ms=3)
+
+weight_bins = np.round(np.arange(0.2, 2.31, 0.05), 2)
+weight_group = pd.cut(train["carat"], weight_bins)
+resid_by_weight = m2.resid.groupby(weight_group, observed=True).agg(["mean", "size"])
+resid_by_weight = resid_by_weight[resid_by_weight["size"] >= 30]
+bin_middle = [interval.mid for interval in resid_by_weight.index]
+ax[1].plot(bin_middle, resid_by_weight["mean"], marker="o", ms=3)
 ax[1].axhline(0, color="red")
-for t in (0.5, 1, 1.5, 2):
-    ax[1].axvline(t, color="gray", ls="--", lw=0.8)
+for weight in [0.5, 1, 1.5, 2]:
+    ax[1].axvline(weight, color="gray", ls="--", lw=0.8)
 ax[1].set(xlabel="Вага, ct", ylabel="Середній залишок (ln)", title="(б) Середній залишок за вагою")
-import scipy.stats as st
-st.probplot(m2.resid.sample(4000, random_state=SEED), dist="norm", plot=ax[2])
+
+stats.probplot(m2.resid.sample(4000, random_state=SEED), dist="norm", plot=ax[2])
 ax[2].set_title("(в) Q–Q графік залишків (4000 точок)")
-plt.tight_layout(); savefig("04_m2_diagnostics"); plt.show()
+
+plt.tight_layout()
+save_figure("04_m2_diagnostics")
+plt.show()
 ```
 
 ```{python}
 #| label: influence
-m2_plain = smf.ols("log_price ~ log_carat + C(cut) + C(color) + C(clarity)", data=trc).fit()
-bp1 = het_breuschpagan(m1.resid, m1.model.exog)[1]
-bp2 = het_breuschpagan(m2_plain.resid, m2_plain.model.exog)[1]
-infl = OLSInfluence(m2_plain)
-cook = infl.cooks_distance[0]
-n_cook = int((cook > 4 / len(trc)).sum())
-top = np.argsort(cook)[-int(0.01 * len(trc)):]
-m2_wo = smf.ols("log_price ~ log_carat + C(cut) + C(color) + C(clarity)",
-                data=trc.drop(trc.index[top])).fit()
-sd_ratio = m1.resid[m1.fittedvalues > 10000].std() / m1.resid[m1.fittedvalues < 2000].std()
-KEY.update(n_cook=n_cook, cook_max=rnd(float(cook.max()), 4),
-           b1_wo=rnd(m2_wo.params["log_carat"], 3), sd_ratio=rnd(sd_ratio, 1))
+m2_plain = smf.ols(FORMULAS["M2"], data=train).fit()
+
+bp_m1 = het_breuschpagan(m1.resid, m1.model.exog)[1]
+bp_m2 = het_breuschpagan(m2_plain.resid, m2_plain.model.exog)[1]
+
+cook = OLSInfluence(m2_plain).cooks_distance[0]
+n_cook = int((cook > 4 / len(train)).sum())
+
+n_top = int(0.01 * len(train))
+top_rows = np.argsort(cook)[-n_top:]
+train_without_top = train.drop(train.index[top_rows])
+m2_without_top = smf.ols(FORMULAS["M2"], data=train_without_top).fit()
+
+spread_expensive = m1.resid[m1.fittedvalues > 10000].std()
+spread_cheap = m1.resid[m1.fittedvalues < 2000].std()
+
+KEY["n_cook"] = n_cook
+KEY["cook_max"] = rnd(cook.max(), 4)
+KEY["b1_wo"] = rnd(m2_without_top.params["log_carat"], 3)
+KEY["sd_ratio"] = rnd(spread_expensive / spread_cheap, 1)
+
 pd.DataFrame({
     "перевірка": ["Breusch–Pagan, p (M1)", "Breusch–Pagan, p (M2)",
                   "Кук D > 4/n, кількість", "Максимальна D Кука",
                   "β ln(carat) без 1 % найвпливовіших"],
-    "значення": [f"{bp1:.1e}", f"{bp2:.1e}", n_cook, rnd(float(cook.max()), 4), KEY["b1_wo"]]})
+    "значення": [f"{bp_m1:.1e}", f"{bp_m2:.1e}", n_cook, KEY["cook_max"], KEY["b1_wo"]],
+})
 ```
 
 **Що показала діагностика і що з цього випливає:**
@@ -420,11 +480,12 @@ pd.DataFrame({
 
 **Проблема:** хвиля в залишках за вагою (@fig-m2-diag б). **Модифікації:**
 
-- **M3** замінює $\ln(carat)$ на кубічний сплайн від $\ln(carat)$ (6 вузлів) і додає 4 порогові змінні
-  $[carat \ge 0.5], [\ge 1], [\ge 1.5], [\ge 2]$ з роботи Scott і Yelowitz.
-- **M4** додатково дозволяє надбавкам за колір і чистоту залежати від ваги (взаємодії
-  $\ln(carat)\times$color і $\ln(carat)\times$clarity). У лабораторній №2 різниця в ціні між рівнями
-  чистоти була більшою серед великих каменів.
+- **M3** замінює пряму $\ln(carat)$ на кубічний сплайн від $\ln(carat)$ (6 ступенів свободи, вузли
+  за навчальною частиною) і додає 4 порогові змінні $[carat \ge 0.5], [\ge 1], [\ge 1.5], [\ge 2]$
+  з роботи Scott і Yelowitz.
+- **M4** додатково дозволяє надбавці за колір залежати від чистоти (взаємодія color × clarity).
+  У лабораторній №2 теплова карта медіанних цін «колір × чистота» для каменів 1 ct показала, що ці
+  надбавки не просто додаються одна до одної.
 
 Ridge не розглядаю: предикторів лише ~20 на ~43 000 спостережень, мультиколінеарності між 4C немає,
 тож штраф майже не змінить коефіцієнтів.
@@ -440,43 +501,65 @@ Ridge не розглядаю: предикторів лише ~20 на ~43 000 
 ```{python}
 #| label: tbl-cv
 #| tbl-cap: "5-кратна перехресна валідація на навчальній частині (однакові розбиття). Метрики в доларах; середнє ± стандартне відхилення за 5 розбиттями."
-kf = KFold(n_splits=5, shuffle=True, random_state=SEED)
-rows, folds = [], {}
-for name, model in MODELS.items():
-    r = cross_validate(model, X_tr, y_tr, cv=kf,
-                       scoring=["neg_mean_absolute_error", "neg_root_mean_squared_error", "r2"])
-    mae, rmse, r2 = -r["test_neg_mean_absolute_error"], -r["test_neg_root_mean_squared_error"], r["test_r2"]
-    folds[name] = mae
-    rows.append({"модель": name, "MAE, $": f"{mae.mean():.0f} ± {mae.std():.0f}",
-                 "RMSE, $": f"{rmse.mean():.0f} ± {rmse.std():.0f}",
-                 "R²": f"{r2.mean():.3f} ± {r2.std():.3f}",
-                 "_mae": mae.mean(), "_sd": mae.std(), "_rmse": rmse.mean()})
-cv = pd.DataFrame(rows)
-cv.drop(columns=["_mae", "_sd", "_rmse"]).to_csv("results/cv_comparison.csv", index=False)
-cv.drop(columns=["_mae", "_sd", "_rmse"])
+kfold = KFold(n_splits=5, shuffle=True, random_state=SEED)
+cv_rows = []
+
+for code in MODEL_NAMES:
+    mae_list = []
+    rmse_list = []
+    r2_list = []
+    for fit_index, valid_index in kfold.split(train):
+        fit_part = train.iloc[fit_index]
+        valid_part = train.iloc[valid_index]
+        prediction = predict_price(code, fit_part, valid_part)
+        mae_list.append(mean_absolute_error(valid_part["price"], prediction))
+        rmse_list.append(root_mean_squared_error(valid_part["price"], prediction))
+        r2_list.append(r2_score(valid_part["price"], prediction))
+    cv_rows.append({
+        "code": code,
+        "модель": MODEL_NAMES[code],
+        "mae": np.mean(mae_list),
+        "mae_sd": np.std(mae_list),
+        "rmse": np.mean(rmse_list),
+        "rmse_sd": np.std(rmse_list),
+        "r2": np.mean(r2_list),
+        "r2_sd": np.std(r2_list),
+    })
+
+cv = pd.DataFrame(cv_rows).set_index("code")
+
+cv_table = pd.DataFrame({
+    "модель": cv["модель"],
+    "MAE, $": cv["mae"].map("{:.0f}".format) + " ± " + cv["mae_sd"].map("{:.0f}".format),
+    "RMSE, $": cv["rmse"].map("{:.0f}".format) + " ± " + cv["rmse_sd"].map("{:.0f}".format),
+    "R²": cv["r2"].map("{:.3f}".format) + " ± " + cv["r2_sd"].map("{:.3f}".format),
+})
+cv_table.to_csv("results/cv_comparison.csv", index=False)
+cv_table.reset_index(drop=True)
 ```
 
 ```{python}
 #| label: choice
-order = cv.sort_values("_mae").reset_index(drop=True)
-best = order.loc[0]
-chosen = best["модель"]
-simpler = [m for m in MODELS if m != chosen and list(MODELS).index(m) < list(MODELS).index(chosen)
-           and "M0" not in m]
-for m in simpler:
-    if cv.set_index("модель").loc[m, "_mae"] - best["_mae"] < best["_sd"]:
-        chosen = m
+best = cv["mae"].idxmin()
+chosen = best
+for code in ["M1", "M2", "M3", "M4", "M5"]:
+    if code == best:
         break
-lin = [m for m in order["модель"] if m[:2] in ("M1", "M2", "M3", "M4")][0]
-cvi = cv.set_index("модель")
-KEY.update(chosen=chosen, best_linear=lin,
-           cv=cv[["модель", "_mae", "_sd", "_rmse"]].round(1).to_dict("records"))
-gain_m3 = (1 - cvi.loc["M3 log–log + сплайн і пороги ваги", "_mae"] / cvi.loc["M2 лінійна log–log", "_mae"]) * 100
-gain_m4 = (1 - cvi.loc["M4 = M3 + взаємодії вага×колір, вага×чистота", "_mae"]
-           / cvi.loc["M3 log–log + сплайн і пороги ваги", "_mae"]) * 100
-gain_gb = (1 - cvi.loc["M5 градієнтний бустинг (додатково)", "_mae"] / cvi.loc[lin, "_mae"]) * 100
-KEY.update(gain_m3=rnd(gain_m3, 1), gain_m4=rnd(gain_m4, 1), gain_gb=rnd(gain_gb, 1))
-Markdown(f"**Обрана модель (до відкриття тесту): {chosen}.** Найкраща лінійна модель: {lin}.")
+    if cv.loc[code, "mae"] - cv.loc[best, "mae"] < cv.loc[best, "mae_sd"]:
+        chosen = code
+        break
+
+best_linear = cv.loc[["M1", "M2", "M3", "M4"], "mae"].idxmin()
+
+KEY["chosen"] = MODEL_NAMES[chosen]
+KEY["best_linear"] = MODEL_NAMES[best_linear]
+KEY["cv"] = cv[["модель", "mae", "mae_sd", "rmse"]].round(1).to_dict("records")
+KEY["gain_m3"] = rnd((1 - cv.loc["M3", "mae"] / cv.loc["M2", "mae"]) * 100, 1)
+KEY["gain_m4"] = rnd((1 - cv.loc["M4", "mae"] / cv.loc["M3", "mae"]) * 100, 1)
+KEY["gain_gb"] = rnd((1 - cv.loc["M5", "mae"] / cv.loc[best_linear, "mae"]) * 100, 1)
+
+Markdown("**Обрана модель (до відкриття тесту): " + MODEL_NAMES[chosen] + ".** "
+         + "Найкраща лінійна модель: " + MODEL_NAMES[best_linear] + ".")
 ```
 
 **Що показала валідація:**
@@ -485,7 +568,7 @@ Markdown(f"**Обрана модель (до відкриття тесту): {ch
   вдвічі. Отже, форма зв'язку важить більше за вибір предикторів.
 - **Сплайн і пороги (M3)** зменшують MAE ще на `{python} KEY["gain_m3"]` % порівняно з M2, різниця
   набагато більша за розкид між розбиттями. Модифікація розв'язала проблему, яку показала діагностика.
-- **Взаємодії (M4)** зменшують MAE ще на `{python} KEY["gain_m4"]` % порівняно з M3.
+- **Взаємодія колір × чистота (M4)** зменшує MAE ще на `{python} KEY["gain_m4"]` % порівняно з M3.
 - **Бустинг (M5)** точніший за найкращу лінійну модель на `{python} KEY["gain_gb"]` %, але не має
   коефіцієнтів. Тому гіпотези перевіряю в M2, а для прогнозу беру модель за правилом вибору.
 
@@ -494,54 +577,74 @@ Markdown(f"**Обрана модель (до відкриття тесту): {ch
 ```{python}
 #| label: tbl-test
 #| tbl-cap: "Одноразова оцінка на тестовій частині. Моделі перенавчено на всій навчальній частині."
-final = {}
-for name in dict.fromkeys(["M0 константа (середнє)", chosen, lin]):
-    m = MODELS[name].fit(X_tr, y_tr)
-    p = m.predict(X_te)
-    final[name] = p
-test_rows = [{"модель": n, "MAE, $": rnd(mean_absolute_error(y_te, p)),
-              "RMSE, $": rnd(root_mean_squared_error(y_te, p)),
-              "R²": rnd(r2_score(y_te, p), 3),
-              "медіана |помилки| / ціна, %": rnd(np.median(np.abs(y_te - p) / y_te) * 100, 1)}
-             for n, p in final.items()]
-tt = pd.DataFrame(test_rows)
-tt.to_csv("results/test_metrics.csv", index=False)
-KEY["test"] = tt.to_dict("records")
-tt
+test_models = ["M0", chosen]
+if best_linear != chosen:
+    test_models.append(best_linear)
+
+test_predictions = {}
+test_rows = []
+for code in test_models:
+    prediction = predict_price(code, train, test)
+    test_predictions[code] = prediction
+    relative_error = np.abs(test["price"] - prediction) / test["price"] * 100
+    test_rows.append({
+        "модель": MODEL_NAMES[code],
+        "MAE, $": rnd(mean_absolute_error(test["price"], prediction)),
+        "RMSE, $": rnd(root_mean_squared_error(test["price"], prediction)),
+        "R²": rnd(r2_score(test["price"], prediction), 3),
+        "медіана |помилки| / ціна, %": rnd(np.median(relative_error), 1),
+    })
+
+test_table = pd.DataFrame(test_rows)
+test_table.to_csv("results/test_metrics.csv", index=False)
+KEY["test"] = test_table.to_dict("records")
+test_table
 ```
 
 ```{python}
 #| label: fig-test
 #| fig-cap: "Тест: фактична ціна проти прогнозу обраної моделі (log-шкали; червона лінія — ідеальний прогноз) і абсолютна помилка за групами ваги."
-pred = final[chosen]
-err = test.assign(pred=pred, abs_err=np.abs(test.price - pred),
-                  rel_err=np.abs(test.price - pred) / test.price * 100)
-err["група ваги"] = pd.cut(err.carat, [0, 0.5, 0.75, 1, 1.5, 2, 5.1],
+err = test.copy()
+err["pred"] = test_predictions[chosen]
+err["abs_err"] = np.abs(err["price"] - err["pred"])
+err["rel_err"] = err["abs_err"] / err["price"] * 100
+err["група ваги"] = pd.cut(err["carat"], [0, 0.5, 0.75, 1, 1.5, 2, 5.1],
                            labels=["до 0.5", "0.5–0.75", "0.75–1", "1–1.5", "1.5–2", "понад 2"])
+
 fig, ax = plt.subplots(1, 2, figsize=(14, 4.8))
-ax[0].scatter(err.price, err.pred, s=3, alpha=0.15)
-lim = [300, 20000]
-ax[0].plot(lim, lim, color="red")
-ax[0].set(xscale="log", yscale="log", xlim=lim, ylim=lim, xlabel="Фактична ціна, $",
-          ylabel="Прогноз, $", title=f"Фактичне і прогноз: {chosen.split(' ')[0]}")
+ax[0].scatter(err["price"], err["pred"], s=3, alpha=0.15)
+ax[0].plot([300, 20000], [300, 20000], color="red")
+ax[0].set(xscale="log", yscale="log", xlim=[300, 20000], ylim=[300, 20000],
+          xlabel="Фактична ціна, $", ylabel="Прогноз, $", title="Фактичне і прогноз: " + chosen)
 sns.boxplot(data=err, x="група ваги", y="abs_err", ax=ax[1], showfliers=False, color="lightblue")
 ax[1].set(xlabel="Вага, ct", ylabel="|помилка|, $", title="Абсолютна помилка за вагою")
-plt.tight_layout(); savefig("05_test_pred"); plt.show()
-by = err.groupby("група ваги", observed=True).agg(
-    n=("price", "size"), median_price=("price", "median"),
-    MAE=("abs_err", "mean"), median_rel_err=("rel_err", "median")).round(1)
-by.to_csv("results/test_errors_by_carat.csv")
-KEY["by_carat"] = by.reset_index().astype({"група ваги": str}).to_dict("records")
-by.rename(columns={"n": "каменів", "median_price": "медіана ціни, $",
-                   "MAE": "MAE, $", "median_rel_err": "медіана відн. помилки, %"})
+plt.tight_layout()
+save_figure("05_test_pred")
+plt.show()
+
+by_weight = err.groupby("група ваги", observed=True).agg(
+    n=("price", "size"),
+    median_price=("price", "median"),
+    MAE=("abs_err", "mean"),
+    median_rel_err=("rel_err", "median"),
+).round(1)
+by_weight.to_csv("results/test_errors_by_carat.csv")
+KEY["by_carat"] = by_weight.reset_index().astype({"група ваги": str}).to_dict("records")
+
+by_weight.rename(columns={"n": "каменів", "median_price": "медіана ціни, $",
+                          "MAE": "MAE, $", "median_rel_err": "медіана відн. помилки, %"})
 ```
 
 ```{python}
 #| label: worst
-cap = err[err.price > 15000]
-KEY.update(mae_cap=rnd(cap.abs_err.mean()), n_cap=len(cap),
-           share_big_err=rnd(err.loc[err.carat >= 1.5, "abs_err"].sum() / err.abs_err.sum() * 100),
-           share_big_n=rnd((err.carat >= 1.5).mean() * 100))
+expensive = err[err["price"] > 15000]
+big_stones = err[err["carat"] >= 1.5]
+
+KEY["n_cap"] = len(expensive)
+KEY["mae_cap"] = rnd(expensive["abs_err"].mean())
+KEY["share_big_n"] = rnd(len(big_stones) / len(err) * 100)
+KEY["share_big_err"] = rnd(big_stones["abs_err"].sum() / err["abs_err"].sum() * 100)
+
 worst = err.sort_values("abs_err", ascending=False).head(6)
 worst[["carat", "cut", "color", "clarity", "price", "pred", "abs_err"]].round(0)
 ```
@@ -558,8 +661,8 @@ worst[["carat", "cut", "color", "clarity", "price", "pred", "abs_err"]].round(0)
 
 ```{python}
 #| label: save-key
-with open("results/key_numbers.json", "w", encoding="utf-8") as f:
-    json.dump(KEY, f, ensure_ascii=False, indent=2, default=str)
+with open("results/key_numbers.json", "w", encoding="utf-8") as file:
+    json.dump(KEY, file, ensure_ascii=False, indent=2, default=str)
 ```
 
 # Обговорення й висновки

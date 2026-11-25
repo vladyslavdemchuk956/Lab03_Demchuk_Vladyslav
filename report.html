@@ -2450,41 +2450,44 @@ window.Quarto = {
 <div id="setup" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Пакети й налаштування</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hashlib, json, os, warnings</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.diagnostic <span class="im">import</span> het_breuschpagan</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.outliers_influence <span class="im">import</span> OLSInfluence</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, KFold, cross_validate</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer, TransformedTargetRegressor</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> (OneHotEncoder, OrdinalEncoder, FunctionTransformer,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                                   SplineTransformer, PolynomialFeatures)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.dummy <span class="im">import</span> DummyRegressor</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> HistGradientBoostingRegressor</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_absolute_error, root_mean_squared_error, r2_score</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">&quot;ignore&quot;</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">&quot;whitegrid&quot;</span>)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">42</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>os.makedirs(<span class="st">&quot;figures&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>os.makedirs(<span class="st">&quot;results&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hashlib</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.stats <span class="im">as</span> stats</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.diagnostic <span class="im">import</span> het_breuschpagan</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.outliers_influence <span class="im">import</span> OLSInfluence</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, KFold</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> HistGradientBoostingRegressor</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_absolute_error, root_mean_squared_error, r2_score</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">&quot;whitegrid&quot;</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>os.makedirs(<span class="st">&quot;figures&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>os.makedirs(<span class="st">&quot;results&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>KEY <span class="op">=</span> {}</span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> savefig(name):</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="ss">f&quot;figures/</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.png&quot;</span>, dpi<span class="op">=</span><span class="dv">150</span>, bbox_inches<span class="op">=</span><span class="st">&quot;tight&quot;</span>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rnd(x, n<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">round</span>(<span class="bu">float</span>(x)) <span class="cf">if</span> n <span class="kw">is</span> <span class="va">None</span> <span class="cf">else</span> <span class="bu">round</span>(<span class="bu">float</span>(x), n)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> usd(v):</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f&quot;</span><span class="sc">{</span>v<span class="sc">:,.0f}</span><span class="ss">&quot;</span>.replace(<span class="st">&quot;,&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="op">+</span> <span class="st">&quot; $&quot;</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>KEY <span class="op">=</span> {}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_figure(name):</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="st">&quot;figures/&quot;</span> <span class="op">+</span> name <span class="op">+</span> <span class="st">&quot;.png&quot;</span>, dpi<span class="op">=</span><span class="dv">150</span>, bbox_inches<span class="op">=</span><span class="st">&quot;tight&quot;</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rnd(x, digits<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> digits <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">int</span>(<span class="bu">round</span>(<span class="bu">float</span>(x)))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">round</span>(<span class="bu">float</span>(x), digits)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> usd(value):</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f&quot;</span><span class="sc">{</span>value<span class="sc">:,.0f}</span><span class="ss">&quot;</span>.replace(<span class="st">&quot;,&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="op">+</span> <span class="st">&quot; $&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="вступ" class="level1" data-number="1">
@@ -2545,22 +2548,32 @@ Warning
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> pd.read_csv(RAW)</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> raw.drop_duplicates()</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df.x <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df.y <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df.z <span class="op">&gt;</span> <span class="dv">0</span>)]</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>depth_calc <span class="op">=</span> df.z <span class="op">/</span> ((df.x <span class="op">+</span> df.y) <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(depth_calc <span class="op">-</span> df.depth).<span class="bu">abs</span>() <span class="op">&lt;=</span> <span class="dv">5</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>CATS <span class="op">=</span> {<span class="st">&quot;cut&quot;</span>: [<span class="st">&quot;Fair&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Very Good&quot;</span>, <span class="st">&quot;Premium&quot;</span>, <span class="st">&quot;Ideal&quot;</span>],</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;color&quot;</span>: [<span class="st">&quot;J&quot;</span>, <span class="st">&quot;I&quot;</span>, <span class="st">&quot;H&quot;</span>, <span class="st">&quot;G&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;E&quot;</span>, <span class="st">&quot;D&quot;</span>],</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;clarity&quot;</span>: [<span class="st">&quot;I1&quot;</span>, <span class="st">&quot;SI2&quot;</span>, <span class="st">&quot;SI1&quot;</span>, <span class="st">&quot;VS2&quot;</span>, <span class="st">&quot;VS1&quot;</span>, <span class="st">&quot;VVS2&quot;</span>, <span class="st">&quot;VVS1&quot;</span>, <span class="st">&quot;IF&quot;</span>]}</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c, lv <span class="kw">in</span> CATS.items():</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    df[c] <span class="op">=</span> pd.Categorical(df[c], categories<span class="op">=</span>lv, ordered<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;log_price&quot;</span>] <span class="op">=</span> np.log(df.price)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;log_carat&quot;</span>] <span class="op">=</span> np.log(df.carat)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>KEY.update(n_raw<span class="op">=</span><span class="bu">len</span>(raw), n_clean<span class="op">=</span><span class="bu">len</span>(df), sha<span class="op">=</span>sha)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Рядків у файлі: </span><span class="sc">{</span><span class="bu">len</span>(raw)<span class="sc">}</span><span class="ss">, після очищення: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">; SHA-256: </span><span class="sc">{</span>sha[:<span class="dv">16</span>]<span class="sc">}</span><span class="ss">…&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">&quot;x&quot;</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">&quot;y&quot;</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">&quot;z&quot;</span>] <span class="op">&gt;</span> <span class="dv">0</span>)]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>depth_from_size <span class="op">=</span> df[<span class="st">&quot;z&quot;</span>] <span class="op">/</span> ((df[<span class="st">&quot;x&quot;</span>] <span class="op">+</span> df[<span class="st">&quot;y&quot;</span>]) <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(depth_from_size <span class="op">-</span> df[<span class="st">&quot;depth&quot;</span>]).<span class="bu">abs</span>() <span class="op">&lt;=</span> <span class="dv">5</span>]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>cut_order <span class="op">=</span> [<span class="st">&quot;Fair&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Very Good&quot;</span>, <span class="st">&quot;Premium&quot;</span>, <span class="st">&quot;Ideal&quot;</span>]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>color_order <span class="op">=</span> [<span class="st">&quot;J&quot;</span>, <span class="st">&quot;I&quot;</span>, <span class="st">&quot;H&quot;</span>, <span class="st">&quot;G&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;E&quot;</span>, <span class="st">&quot;D&quot;</span>]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>clarity_order <span class="op">=</span> [<span class="st">&quot;I1&quot;</span>, <span class="st">&quot;SI2&quot;</span>, <span class="st">&quot;SI1&quot;</span>, <span class="st">&quot;VS2&quot;</span>, <span class="st">&quot;VS1&quot;</span>, <span class="st">&quot;VVS2&quot;</span>, <span class="st">&quot;VVS1&quot;</span>, <span class="st">&quot;IF&quot;</span>]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;cut&quot;</span>] <span class="op">=</span> pd.Categorical(df[<span class="st">&quot;cut&quot;</span>], categories<span class="op">=</span>cut_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;color&quot;</span>] <span class="op">=</span> pd.Categorical(df[<span class="st">&quot;color&quot;</span>], categories<span class="op">=</span>color_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;clarity&quot;</span>] <span class="op">=</span> pd.Categorical(df[<span class="st">&quot;clarity&quot;</span>], categories<span class="op">=</span>clarity_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;log_price&quot;</span>] <span class="op">=</span> np.log(df[<span class="st">&quot;price&quot;</span>])</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;log_carat&quot;</span>] <span class="op">=</span> np.log(df[<span class="st">&quot;carat&quot;</span>])</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;n_raw&quot;</span>] <span class="op">=</span> <span class="bu">len</span>(raw)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;n_clean&quot;</span>] <span class="op">=</span> <span class="bu">len</span>(df)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;sha&quot;</span>] <span class="op">=</span> sha</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Рядків у файлі:&quot;</span>, <span class="bu">len</span>(raw))</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Рядків після очищення:&quot;</span>, <span class="bu">len</span>(df))</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;SHA-256 файлу:&quot;</span>, sha)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Рядків у файлі: 53940, після очищення: 53748; SHA-256: 9574730b03aba241…</code></pre>
+<pre><code>Рядків у файлі: 53940
+Рядків після очищення: 53748
+SHA-256 файлу: 9574730b03aba241d899c4a97511c5061b19358fab89510774fb6c24168345c4</code></pre>
 </div>
 </div>
 <ul>
@@ -2577,11 +2590,13 @@ Warning
 <details class="code-fold">
 <summary>Код</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span>SEED)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>FEATS <span class="op">=</span> [<span class="st">&quot;carat&quot;</span>, <span class="st">&quot;cut&quot;</span>, <span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>]</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>X_tr, y_tr <span class="op">=</span> train[FEATS], train.price</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>X_te, y_te <span class="op">=</span> test[FEATS], test.price</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">&quot;частина&quot;</span>: [<span class="st">&quot;навчальна&quot;</span>, <span class="st">&quot;тестова&quot;</span>], <span class="st">&quot;рядків&quot;</span>: [<span class="bu">len</span>(train), <span class="bu">len</span>(test)],</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;середня ціна, $&quot;</span>: [rnd(y_tr.mean()), rnd(y_te.mean())]})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>split_table <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;частина&quot;</span>: [<span class="st">&quot;навчальна&quot;</span>, <span class="st">&quot;тестова&quot;</span>],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;рядків&quot;</span>: [<span class="bu">len</span>(train), <span class="bu">len</span>(test)],</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;середня ціна, $&quot;</span>: [rnd(train[<span class="st">&quot;price&quot;</span>].mean()), rnd(test[<span class="st">&quot;price&quot;</span>].mean())],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>split_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="split" class="cell-output cell-output-display" data-execution_count="3">
 <div>
@@ -2619,7 +2634,7 @@ Warning
 <li>Усі графіки розділу 2.3 і всю діагностику я побудував <strong>тільки на навчальній частині</strong>.</li>
 <li><strong>Обмеження незалежності тесту.</strong> Лабораторна №2 бачила весь набір, зокрема майбутню тестову частину. Вона вже підказала рішення: логарифмувати ціну й вагу, відкинути x, y, z (дублюють вагу), не брати <code>depth</code> і <code>table</code> (слабкий зв’язок), а також гіпотези H1–H2. Тому тестова оцінка трохи оптимістична. Нових даних з того самого ринку немає, отже повністю незалежної перевірки зробити не можу.</li>
 <li><strong>Доступність предикторів.</strong> 4C вказані в сертифікаті до продажу, тож вони відомі на момент прогнозу. Ціну я ніде не використовую як предиктор.</li>
-<li><strong>Перехресна валідація:</strong> 5-кратна <code>KFold(shuffle=True, random_state=42)</code> на навчальній частині, <strong>однакові розбиття для всіх моделей</strong>. Кодування категорій, логарифмування, сплайни й пороги входять у <code>Pipeline</code>, тож на кожному розбитті вони будуються лише за його навчальною частиною. Пропусків немає, тож імпутація не потрібна; масштабування лінійній регресії без штрафу не потрібне.</li>
+<li><strong>Перехресна валідація:</strong> 5-кратна <code>KFold(shuffle=True, random_state=42)</code> на навчальній частині, <strong>однакові розбиття для всіх моделей</strong>. Кожну модель на кожному розбитті я навчаю тільки на його навчальній частині, а помилку рахую на валідаційній. Лінійні моделі задані формулами <code>statsmodels</code>: кодування категорій і вузли сплайна визначаються лише за навчальною частиною розбиття, а логарифми й пороги ваги рахуються для кожного рядка окремо і нічого не беруть з інших даних. Пропусків немає, тож імпутація не потрібна; масштабування лінійній регресії без штрафу не потрібне.</li>
 </ul>
 </section>
 <section id="що-з-eda-переношу-в-моделювання" class="level2" data-number="2.3">
@@ -2628,21 +2643,28 @@ Warning
 <details class="code-fold">
 <summary>Код</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="fl">4.2</span>))</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sns.histplot(train.price, bins<span class="op">=</span><span class="dv">60</span>, ax<span class="op">=</span>ax[<span class="dv">0</span>], color<span class="op">=</span><span class="st">&quot;steelblue&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Ціна&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;Ціна, $&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Кількість діамантів&quot;</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sns.histplot(train.log_price, bins<span class="op">=</span><span class="dv">60</span>, ax<span class="op">=</span>ax[<span class="dv">1</span>], color<span class="op">=</span><span class="st">&quot;seagreen&quot;</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Логарифм ціни&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;ln(ціна, $)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;&quot;</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].scatter(train.carat, train.price, s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.08</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].<span class="bu">set</span>(xscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, yscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, title<span class="op">=</span><span class="st">&quot;Ціна і вага (log–log)&quot;</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>          xlabel<span class="op">=</span><span class="st">&quot;Вага, ct (log)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Ціна, $ (log)&quot;</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> (<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>):</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">2</span>].axvline(t, color<span class="op">=</span><span class="st">&quot;red&quot;</span>, lw<span class="op">=</span><span class="fl">0.8</span>, ls<span class="op">=</span><span class="st">&quot;--&quot;</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].minorticks_off()</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_xticks([<span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>], [<span class="st">&quot;0.2&quot;</span>, <span class="st">&quot;0.3&quot;</span>, <span class="st">&quot;0.5&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;5&quot;</span>])</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_yticks([<span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>], [<span class="st">&quot;500&quot;</span>, <span class="st">&quot;1000&quot;</span>, <span class="st">&quot;2000&quot;</span>, <span class="st">&quot;5000&quot;</span>, <span class="st">&quot;10000&quot;</span>])</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()<span class="op">;</span> savefig(<span class="st">&quot;01_eda_target&quot;</span>)<span class="op">;</span> plt.show()</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;skew_price&quot;</span>] <span class="op">=</span> rnd(train.price.skew(), <span class="dv">2</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;skew_log&quot;</span>] <span class="op">=</span> rnd(train.log_price.skew(), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sns.histplot(train[<span class="st">&quot;price&quot;</span>], bins<span class="op">=</span><span class="dv">60</span>, ax<span class="op">=</span>ax[<span class="dv">0</span>], color<span class="op">=</span><span class="st">&quot;steelblue&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Ціна&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;Ціна, $&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Кількість діамантів&quot;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>sns.histplot(train[<span class="st">&quot;log_price&quot;</span>], bins<span class="op">=</span><span class="dv">60</span>, ax<span class="op">=</span>ax[<span class="dv">1</span>], color<span class="op">=</span><span class="st">&quot;seagreen&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Логарифм ціни&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;ln(ціна, $)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].scatter(train[<span class="st">&quot;carat&quot;</span>], train[<span class="st">&quot;price&quot;</span>], s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.08</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].<span class="bu">set</span>(xscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, yscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, title<span class="op">=</span><span class="st">&quot;Ціна і вага (log–log)&quot;</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>          xlabel<span class="op">=</span><span class="st">&quot;Вага, ct (log)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Ціна, $ (log)&quot;</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> weight <span class="kw">in</span> [<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>]:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">2</span>].axvline(weight, color<span class="op">=</span><span class="st">&quot;red&quot;</span>, lw<span class="op">=</span><span class="fl">0.8</span>, ls<span class="op">=</span><span class="st">&quot;--&quot;</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].minorticks_off()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_xticks([<span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>], [<span class="st">&quot;0.2&quot;</span>, <span class="st">&quot;0.3&quot;</span>, <span class="st">&quot;0.5&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;5&quot;</span>])</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_yticks([<span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>], [<span class="st">&quot;500&quot;</span>, <span class="st">&quot;1000&quot;</span>, <span class="st">&quot;2000&quot;</span>, <span class="st">&quot;5000&quot;</span>, <span class="st">&quot;10000&quot;</span>])</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>save_figure(<span class="st">&quot;01_eda_target&quot;</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;skew_price&quot;</span>] <span class="op">=</span> rnd(train[<span class="st">&quot;price&quot;</span>].skew(), <span class="dv">2</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;skew_log&quot;</span>] <span class="op">=</span> rnd(train[<span class="st">&quot;log_price&quot;</span>].skew(), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-eda" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -2661,13 +2683,19 @@ Figure 1: EDA на навчальній частині. Ліворуч: цін�
 <details class="code-fold">
 <summary>Код</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>m_all <span class="op">=</span> train.groupby(<span class="st">&quot;clarity&quot;</span>, observed<span class="op">=</span><span class="va">True</span>).price.median()</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>m_1ct <span class="op">=</span> train[train.carat.between(<span class="fl">0.9</span>, <span class="fl">1.1</span>)].groupby(<span class="st">&quot;clarity&quot;</span>, observed<span class="op">=</span><span class="va">True</span>).price.median()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].bar(m_all.index.astype(<span class="bu">str</span>), m_all.values, color<span class="op">=</span><span class="st">&quot;lightgray&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Усі камені&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;Чистота (від гіршої до кращої)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Медіанна ціна, $&quot;</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].bar(m_1ct.index.astype(<span class="bu">str</span>), m_1ct.values, color<span class="op">=</span><span class="st">&quot;steelblue&quot;</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Камені 0.9–1.1 ct&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;Чистота (від гіршої до кращої)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;&quot;</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()<span class="op">;</span> savefig(<span class="st">&quot;02_eda_clarity&quot;</span>)<span class="op">;</span> plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>median_all <span class="op">=</span> train.groupby(<span class="st">&quot;clarity&quot;</span>, observed<span class="op">=</span><span class="va">True</span>)[<span class="st">&quot;price&quot;</span>].median()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>one_carat <span class="op">=</span> train[(train[<span class="st">&quot;carat&quot;</span>] <span class="op">&gt;=</span> <span class="fl">0.9</span>) <span class="op">&amp;</span> (train[<span class="st">&quot;carat&quot;</span>] <span class="op">&lt;=</span> <span class="fl">1.1</span>)]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>median_1ct <span class="op">=</span> one_carat.groupby(<span class="st">&quot;clarity&quot;</span>, observed<span class="op">=</span><span class="va">True</span>)[<span class="st">&quot;price&quot;</span>].median()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].bar(median_all.index.astype(<span class="bu">str</span>), median_all.values, color<span class="op">=</span><span class="st">&quot;lightgray&quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Усі камені&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;Чистота (від гіршої до кращої)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Медіанна ціна, $&quot;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].bar(median_1ct.index.astype(<span class="bu">str</span>), median_1ct.values, color<span class="op">=</span><span class="st">&quot;steelblue&quot;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">&quot;Камені 0.9–1.1 ct&quot;</span>, xlabel<span class="op">=</span><span class="st">&quot;Чистота (від гіршої до кращої)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>save_figure(<span class="st">&quot;02_eda_clarity&quot;</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-eda-clarity" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -2705,48 +2733,52 @@ Figure 2: Медіанна ціна за чистотою: без контро�
 <h1 data-number="3"><span class="header-section-number">3</span> Результати</h1>
 <div id="models" class="cell" data-execution_count="6">
 <details class="code-fold">
-<summary>Опис усіх моделей (однаковий протокол)</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> onehot():</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> OneHotEncoder(categories<span class="op">=</span>[CATS[c] <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">&quot;cut&quot;</span>, <span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>]], drop<span class="op">=</span><span class="st">&quot;first&quot;</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> thresholds(c):</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> np.asarray(c).ravel()</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.column_stack([c <span class="op">&gt;=</span> t <span class="cf">for</span> t <span class="kw">in</span> (<span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">1.5</span>, <span class="fl">2.0</span>)]).astype(<span class="bu">float</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>QUAL <span class="op">=</span> [<span class="st">&quot;cut&quot;</span>, <span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>log_target <span class="op">=</span> <span class="kw">lambda</span> est: TransformedTargetRegressor(est, func<span class="op">=</span>np.log, inverse_func<span class="op">=</span>np.exp)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>MODELS <span class="op">=</span> {</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M0 константа (середнє)&quot;</span>: DummyRegressor(strategy<span class="op">=</span><span class="st">&quot;mean&quot;</span>),</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M1 лінійна, ціна в $&quot;</span>: make_pipeline(</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        ColumnTransformer([(<span class="st">&quot;w&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;carat&quot;</span>]), (<span class="st">&quot;q&quot;</span>, onehot(), QUAL)]),</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        LinearRegression()),</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M2 лінійна log–log&quot;</span>: log_target(make_pipeline(</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        ColumnTransformer([(<span class="st">&quot;w&quot;</span>, FunctionTransformer(np.log), [<span class="st">&quot;carat&quot;</span>]), (<span class="st">&quot;q&quot;</span>, onehot(), QUAL)]),</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        LinearRegression())),</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M3 log–log + сплайн і пороги ваги&quot;</span>: log_target(make_pipeline(</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        ColumnTransformer([</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;s&quot;</span>, make_pipeline(FunctionTransformer(np.log), SplineTransformer(n_knots<span class="op">=</span><span class="dv">6</span>, degree<span class="op">=</span><span class="dv">3</span>)), [<span class="st">&quot;carat&quot;</span>]),</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;t&quot;</span>, FunctionTransformer(thresholds), [<span class="st">&quot;carat&quot;</span>]),</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;q&quot;</span>, onehot(), QUAL)]),</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        LinearRegression())),</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M4 = M3 + взаємодії вага×колір, вага×чистота&quot;</span>: log_target(make_pipeline(</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        ColumnTransformer([</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;s&quot;</span>, make_pipeline(FunctionTransformer(np.log), SplineTransformer(n_knots<span class="op">=</span><span class="dv">6</span>, degree<span class="op">=</span><span class="dv">3</span>)), [<span class="st">&quot;carat&quot;</span>]),</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;t&quot;</span>, FunctionTransformer(thresholds), [<span class="st">&quot;carat&quot;</span>]),</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;q&quot;</span>, onehot(), QUAL),</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;ix&quot;</span>, make_pipeline(</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>                ColumnTransformer([(<span class="st">&quot;w&quot;</span>, FunctionTransformer(np.log), [<span class="st">&quot;carat&quot;</span>]),</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                                   (<span class="st">&quot;q&quot;</span>, OneHotEncoder(categories<span class="op">=</span>[CATS[<span class="st">&quot;color&quot;</span>], CATS[<span class="st">&quot;clarity&quot;</span>]], drop<span class="op">=</span><span class="st">&quot;first&quot;</span>),</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>                                    [<span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>])]),</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                PolynomialFeatures(degree<span class="op">=</span><span class="dv">2</span>, interaction_only<span class="op">=</span><span class="va">True</span>, include_bias<span class="op">=</span><span class="va">False</span>)),</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>             [<span class="st">&quot;carat&quot;</span>, <span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>])]),</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        LinearRegression())),</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M5 градієнтний бустинг (додатково)&quot;</span>: log_target(make_pipeline(</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        ColumnTransformer([(<span class="st">&quot;w&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;carat&quot;</span>]),</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>                           (<span class="st">&quot;q&quot;</span>, OrdinalEncoder(categories<span class="op">=</span>[CATS[c] <span class="cf">for</span> c <span class="kw">in</span> QUAL]), QUAL)]),</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        HistGradientBoostingRegressor(random_state<span class="op">=</span>SEED))),</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<summary>Усі моделі: формули і функція прогнозу</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>QUALITY <span class="op">=</span> <span class="st">&quot;C(cut) + C(color) + C(clarity)&quot;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>SPLINE <span class="op">=</span> <span class="st">&quot;bs(log_carat, df=6, lower_bound=-2.5, upper_bound=2)&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>STEPS <span class="op">=</span> <span class="st">&quot;I(carat &gt;= 0.5) + I(carat &gt;= 1) + I(carat &gt;= 1.5) + I(carat &gt;= 2)&quot;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>FORMULAS <span class="op">=</span> {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M1&quot;</span>: <span class="st">&quot;price ~ carat + &quot;</span> <span class="op">+</span> QUALITY,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M2&quot;</span>: <span class="st">&quot;log_price ~ log_carat + &quot;</span> <span class="op">+</span> QUALITY,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M3&quot;</span>: <span class="st">&quot;log_price ~ &quot;</span> <span class="op">+</span> SPLINE <span class="op">+</span> <span class="st">&quot; + &quot;</span> <span class="op">+</span> STEPS <span class="op">+</span> <span class="st">&quot; + &quot;</span> <span class="op">+</span> QUALITY,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M4&quot;</span>: <span class="st">&quot;log_price ~ &quot;</span> <span class="op">+</span> SPLINE <span class="op">+</span> <span class="st">&quot; + &quot;</span> <span class="op">+</span> STEPS <span class="op">+</span> <span class="st">&quot; + C(cut) + C(color) * C(clarity)&quot;</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>MODEL_NAMES <span class="op">=</span> {</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M0&quot;</span>: <span class="st">&quot;M0 константа (середнє)&quot;</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M1&quot;</span>: <span class="st">&quot;M1 лінійна, ціна в $&quot;</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M2&quot;</span>: <span class="st">&quot;M2 лінійна log–log&quot;</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M3&quot;</span>: <span class="st">&quot;M3 log–log + сплайн і пороги ваги&quot;</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M4&quot;</span>: <span class="st">&quot;M4 = M3 + взаємодія колір×чистота&quot;</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;M5&quot;</span>: <span class="st">&quot;M5 градієнтний бустинг (додатково)&quot;</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> boosting_features(data):</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame({</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;carat&quot;</span>: data[<span class="st">&quot;carat&quot;</span>],</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cut&quot;</span>: data[<span class="st">&quot;cut&quot;</span>].cat.codes,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;color&quot;</span>: data[<span class="st">&quot;color&quot;</span>].cat.codes,</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;clarity&quot;</span>: data[<span class="st">&quot;clarity&quot;</span>].cat.codes,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_price(code, fit_data, new_data):</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> code <span class="op">==</span> <span class="st">&quot;M0&quot;</span>:</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.full(<span class="bu">len</span>(new_data), fit_data[<span class="st">&quot;price&quot;</span>].mean())</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> code <span class="op">==</span> <span class="st">&quot;M5&quot;</span>:</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        booster <span class="op">=</span> HistGradientBoostingRegressor(random_state<span class="op">=</span>SEED)</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>        booster.fit(boosting_features(fit_data), fit_data[<span class="st">&quot;log_price&quot;</span>])</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.exp(booster.predict(boosting_features(new_data)))</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    formula <span class="op">=</span> FORMULAS[code]</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> smf.ols(formula, data<span class="op">=</span>fit_data).fit()</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    prediction <span class="op">=</span> np.asarray(model.predict(new_data))</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> formula.startswith(<span class="st">&quot;log_price&quot;</span>):</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        prediction <span class="op">=</span> np.exp(prediction)</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prediction</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="орієнтир-константний-прогноз" class="level2" data-number="3.1">
@@ -2759,13 +2791,17 @@ Figure 2: Медіанна ціна за чистотою: без контро�
 <div id="cell-fig-m1-resid" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="op">=</span> smf.ols(<span class="st">&quot;price ~ carat + C(cut) + C(color) + C(clarity)&quot;</span>, data<span class="op">=</span>train).fit()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">7.5</span>, <span class="dv">4</span>))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax.scatter(m1.fittedvalues, m1.resid, s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.1</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Прогноз, $&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Залишок, $&quot;</span>, title<span class="op">=</span><span class="st">&quot;M1: залишки проти прогнозів&quot;</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()<span class="op">;</span> savefig(<span class="st">&quot;03_m1_residuals&quot;</span>)<span class="op">;</span> plt.show()</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;m1_neg&quot;</span>] <span class="op">=</span> <span class="bu">int</span>((m1.fittedvalues <span class="op">&lt;</span> <span class="dv">0</span>).<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="op">=</span> smf.ols(FORMULAS[<span class="st">&quot;M1&quot;</span>], data<span class="op">=</span>train).fit()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">7.5</span>, <span class="dv">4</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax.scatter(m1.fittedvalues, m1.resid, s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Прогноз, $&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Залишок, $&quot;</span>, title<span class="op">=</span><span class="st">&quot;M1: залишки проти прогнозів&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>save_figure(<span class="st">&quot;03_m1_residuals&quot;</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;m1_neg&quot;</span>] <span class="op">=</span> <span class="bu">int</span>((m1.fittedvalues <span class="op">&lt;</span> <span class="dv">0</span>).<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-m1-resid" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -2786,28 +2822,36 @@ Figure 3: M1 (ціна в $): залишки проти прогнозів. В�
 <div class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>trc <span class="op">=</span> train.copy()</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>m2 <span class="op">=</span> smf.ols(<span class="st">&quot;log_price ~ log_carat + C(cut) + C(color) + C(clarity)&quot;</span>, data<span class="op">=</span>trc).fit(cov_type<span class="op">=</span><span class="st">&quot;HC3&quot;</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ci <span class="op">=</span> m2.conf_int()</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>coef <span class="op">=</span> pd.DataFrame({<span class="st">&quot;β&quot;</span>: m2.params, <span class="st">&quot;ДІ 2.5 %&quot;</span>: ci[<span class="dv">0</span>], <span class="st">&quot;ДІ 97.5 %&quot;</span>: ci[<span class="dv">1</span>]})</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>coef[<span class="st">&quot;надбавка, %&quot;</span>] <span class="op">=</span> (np.exp(coef[<span class="st">&quot;β&quot;</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>coef[<span class="st">&quot;ДІ надбавки, %&quot;</span>] <span class="op">=</span> [<span class="ss">f&quot;</span><span class="sc">{</span>(np.exp(a)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span><span class="sc">:.0f}</span><span class="ss"> … </span><span class="sc">{</span>(np.exp(b)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span><span class="sc">:.0f}</span><span class="ss">&quot;</span> <span class="cf">for</span> a, b <span class="kw">in</span> <span class="bu">zip</span>(ci[<span class="dv">0</span>], ci[<span class="dv">1</span>])]</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>coef.loc[<span class="st">&quot;log_carat&quot;</span>, [<span class="st">&quot;надбавка, %&quot;</span>, <span class="st">&quot;ДІ надбавки, %&quot;</span>]] <span class="op">=</span> [np.nan, <span class="st">&quot;еластичність&quot;</span>]</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>coef.loc[<span class="st">&quot;Intercept&quot;</span>, [<span class="st">&quot;надбавка, %&quot;</span>, <span class="st">&quot;ДІ надбавки, %&quot;</span>]] <span class="op">=</span> [np.nan, <span class="st">&quot;ln ціни базового каменя 1 ct&quot;</span>]</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>coef.index <span class="op">=</span> [i.replace(<span class="st">&quot;C(&quot;</span>, <span class="st">&quot;&quot;</span>).replace(<span class="st">&quot;)[T.&quot;</span>, <span class="st">&quot; = &quot;</span>).replace(<span class="st">&quot;]&quot;</span>, <span class="st">&quot;&quot;</span>) <span class="cf">for</span> i <span class="kw">in</span> coef.index]</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>coef.<span class="bu">round</span>(<span class="dv">3</span>).to_csv(<span class="st">&quot;results/m2_coefficients.csv&quot;</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>b1, b1_lo, b1_hi <span class="op">=</span> m2.params[<span class="st">&quot;log_carat&quot;</span>], ci.loc[<span class="st">&quot;log_carat&quot;</span>, <span class="dv">0</span>], ci.loc[<span class="st">&quot;log_carat&quot;</span>, <span class="dv">1</span>]</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m2.params.<span class="bu">filter</span>(like<span class="op">=</span><span class="st">&quot;clarity&quot;</span>)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>cl_lo, cl_hi <span class="op">=</span> ci.loc[cl.index, <span class="dv">0</span>], ci.loc[cl.index, <span class="dv">1</span>]</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>KEY.update(b1<span class="op">=</span>rnd(b1, <span class="dv">3</span>), b1_lo<span class="op">=</span>rnd(b1_lo, <span class="dv">3</span>), b1_hi<span class="op">=</span>rnd(b1_hi, <span class="dv">3</span>),</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>           r2_m2<span class="op">=</span>rnd(m2.rsquared, <span class="dv">4</span>),</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>           if_prem<span class="op">=</span>rnd((np.exp(cl.iloc[<span class="op">-</span><span class="dv">1</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>),</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>           if_lo<span class="op">=</span>rnd((np.exp(cl_lo.iloc[<span class="op">-</span><span class="dv">1</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>), if_hi<span class="op">=</span>rnd((np.exp(cl_hi.iloc[<span class="op">-</span><span class="dv">1</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>),</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>           si2_prem<span class="op">=</span>rnd((np.exp(cl.iloc[<span class="dv">0</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>),</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>           clar_monotone<span class="op">=</span><span class="bu">bool</span>(np.<span class="bu">all</span>(np.diff(np.r_[<span class="dv">0</span>, cl.values]) <span class="op">&gt;</span> <span class="dv">0</span>)),</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>           d_prem<span class="op">=</span>rnd((np.exp(m2.params.<span class="bu">filter</span>(like<span class="op">=</span><span class="st">&quot;color&quot;</span>).iloc[<span class="op">-</span><span class="dv">1</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>),</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>           ideal_prem<span class="op">=</span>rnd((np.exp(m2.params.<span class="bu">filter</span>(like<span class="op">=</span><span class="st">&quot;cut&quot;</span>).iloc[<span class="op">-</span><span class="dv">1</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>coef.drop(columns<span class="op">=</span><span class="st">&quot;надбавка, %&quot;</span>).<span class="bu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="op">=</span> smf.ols(FORMULAS[<span class="st">&quot;M2&quot;</span>], data<span class="op">=</span>train).fit(cov_type<span class="op">=</span><span class="st">&quot;HC3&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ci <span class="op">=</span> m2.conf_int()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>coef <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;β&quot;</span>: m2.params,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ДІ 2.5 %&quot;</span>: ci[<span class="dv">0</span>],</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ДІ 97.5 %&quot;</span>: ci[<span class="dv">1</span>],</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;надбавка, %&quot;</span>: (np.exp(m2.params) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>coef.loc[[<span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;log_carat&quot;</span>], <span class="st">&quot;надбавка, %&quot;</span>] <span class="op">=</span> np.nan</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>coef <span class="op">=</span> coef.<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>coef.to_csv(<span class="st">&quot;results/m2_coefficients.csv&quot;</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>b1 <span class="op">=</span> m2.params[<span class="st">&quot;log_carat&quot;</span>]</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>clarity_terms <span class="op">=</span> [<span class="st">&quot;C(clarity)[T.&quot;</span> <span class="op">+</span> level <span class="op">+</span> <span class="st">&quot;]&quot;</span> <span class="cf">for</span> level <span class="kw">in</span> clarity_order[<span class="dv">1</span>:]]</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>clarity_beta <span class="op">=</span> m2.params[clarity_terms]</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;b1&quot;</span>] <span class="op">=</span> rnd(b1, <span class="dv">3</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;b1_lo&quot;</span>] <span class="op">=</span> rnd(ci.loc[<span class="st">&quot;log_carat&quot;</span>, <span class="dv">0</span>], <span class="dv">3</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;b1_hi&quot;</span>] <span class="op">=</span> rnd(ci.loc[<span class="st">&quot;log_carat&quot;</span>, <span class="dv">1</span>], <span class="dv">3</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;r2_m2&quot;</span>] <span class="op">=</span> rnd(m2.rsquared, <span class="dv">4</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;si2_prem&quot;</span>] <span class="op">=</span> rnd((np.exp(m2.params[<span class="st">&quot;C(clarity)[T.SI2]&quot;</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;if_prem&quot;</span>] <span class="op">=</span> rnd((np.exp(m2.params[<span class="st">&quot;C(clarity)[T.IF]&quot;</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;if_lo&quot;</span>] <span class="op">=</span> rnd((np.exp(ci.loc[<span class="st">&quot;C(clarity)[T.IF]&quot;</span>, <span class="dv">0</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;if_hi&quot;</span>] <span class="op">=</span> rnd((np.exp(ci.loc[<span class="st">&quot;C(clarity)[T.IF]&quot;</span>, <span class="dv">1</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;clar_monotone&quot;</span>] <span class="op">=</span> <span class="bu">bool</span>(clarity_beta.is_monotonic_increasing <span class="kw">and</span> (clarity_beta <span class="op">&gt;</span> <span class="dv">0</span>).<span class="bu">all</span>())</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;d_prem&quot;</span>] <span class="op">=</span> rnd((np.exp(m2.params[<span class="st">&quot;C(color)[T.D]&quot;</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;ideal_prem&quot;</span>] <span class="op">=</span> rnd((np.exp(m2.params[<span class="st">&quot;C(cut)[T.Ideal]&quot;</span>]) <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>coef</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-m2" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2826,7 +2870,7 @@ Table 1: M2: ключові коефіцієнти, 95 % ДІ (HC3) і надб
 <th data-quarto-table-cell-role="th">β</th>
 <th data-quarto-table-cell-role="th">ДІ 2.5 %</th>
 <th data-quarto-table-cell-role="th">ДІ 97.5 %</th>
-<th data-quarto-table-cell-role="th">ДІ надбавки, %</th>
+<th data-quarto-table-cell-role="th">надбавка, %</th>
 </tr>
 </thead>
 <tbody>
@@ -2835,133 +2879,133 @@ Table 1: M2: ключові коефіцієнти, 95 % ДІ (HC3) і надб
 <td>7.343</td>
 <td>7.321</td>
 <td>7.365</td>
-<td>ln ціни базового каменя 1 ct</td>
+<td>NaN</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">cut = Good</th>
+<th data-quarto-table-cell-role="th">C(cut)[T.Good]</th>
 <td>0.086</td>
 <td>0.075</td>
 <td>0.096</td>
-<td>8 … 10</td>
+<td>8.940</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">cut = Very Good</th>
+<th data-quarto-table-cell-role="th">C(cut)[T.Very Good]</th>
 <td>0.122</td>
 <td>0.112</td>
 <td>0.132</td>
-<td>12 … 14</td>
+<td>13.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">cut = Premium</th>
+<th data-quarto-table-cell-role="th">C(cut)[T.Premium]</th>
 <td>0.144</td>
 <td>0.134</td>
 <td>0.154</td>
-<td>14 … 17</td>
+<td>15.474</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">cut = Ideal</th>
+<th data-quarto-table-cell-role="th">C(cut)[T.Ideal]</th>
 <td>0.166</td>
 <td>0.156</td>
 <td>0.176</td>
-<td>17 … 19</td>
+<td>18.036</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">color = I</th>
+<th data-quarto-table-cell-role="th">C(color)[T.I]</th>
 <td>0.138</td>
 <td>0.131</td>
 <td>0.145</td>
-<td>14 … 16</td>
+<td>14.763</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">color = H</th>
+<th data-quarto-table-cell-role="th">C(color)[T.H]</th>
 <td>0.260</td>
 <td>0.253</td>
 <td>0.267</td>
-<td>29 … 31</td>
+<td>29.699</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">color = G</th>
+<th data-quarto-table-cell-role="th">C(color)[T.G]</th>
 <td>0.350</td>
 <td>0.343</td>
 <td>0.356</td>
-<td>41 … 43</td>
+<td>41.874</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">color = F</th>
+<th data-quarto-table-cell-role="th">C(color)[T.F]</th>
 <td>0.415</td>
 <td>0.408</td>
 <td>0.422</td>
-<td>50 … 52</td>
+<td>51.432</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">color = E</th>
+<th data-quarto-table-cell-role="th">C(color)[T.E]</th>
 <td>0.455</td>
 <td>0.448</td>
 <td>0.462</td>
-<td>57 … 59</td>
+<td>57.620</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">color = D</th>
+<th data-quarto-table-cell-role="th">C(color)[T.D]</th>
 <td>0.511</td>
 <td>0.503</td>
 <td>0.518</td>
-<td>65 … 68</td>
+<td>66.626</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">clarity = SI2</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.SI2]</th>
 <td>0.427</td>
 <td>0.407</td>
 <td>0.446</td>
-<td>50 … 56</td>
+<td>53.240</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">clarity = SI1</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.SI1]</th>
 <td>0.592</td>
 <td>0.572</td>
 <td>0.611</td>
-<td>77 … 84</td>
+<td>80.672</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">clarity = VS2</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.VS2]</th>
 <td>0.742</td>
 <td>0.723</td>
 <td>0.761</td>
-<td>106 … 114</td>
+<td>110.005</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">clarity = VS1</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.VS1]</th>
 <td>0.811</td>
 <td>0.791</td>
 <td>0.830</td>
-<td>121 … 129</td>
+<td>124.972</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">clarity = VVS2</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.VVS2]</th>
 <td>0.946</td>
 <td>0.926</td>
 <td>0.966</td>
-<td>152 … 163</td>
+<td>157.497</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">clarity = VVS1</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.VVS1]</th>
 <td>1.018</td>
 <td>0.998</td>
 <td>1.038</td>
-<td>171 … 182</td>
+<td>176.801</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">clarity = IF</th>
+<th data-quarto-table-cell-role="th">C(clarity)[T.IF]</th>
 <td>1.112</td>
 <td>1.091</td>
 <td>1.133</td>
-<td>198 … 211</td>
+<td>204.128</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">log_carat</th>
 <td>1.884</td>
 <td>1.881</td>
 <td>1.887</td>
-<td>еластичність</td>
+<td>NaN</td>
 </tr>
 </tbody>
 </table>
@@ -2985,22 +3029,28 @@ Table 1: M2: ключові коефіцієнти, 95 % ДІ (HC3) і надб
 <details class="code-fold">
 <summary>Код</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="fl">4.3</span>))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].scatter(m2.fittedvalues, m2.resid, s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.08</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Прогноз ln(ціна)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Залишок&quot;</span>, title<span class="op">=</span><span class="st">&quot;(а) Залишки проти прогнозів&quot;</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> np.<span class="bu">round</span>(np.arange(<span class="fl">0.2</span>, <span class="fl">2.31</span>, <span class="fl">0.05</span>), <span class="dv">2</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>grp <span class="op">=</span> pd.cut(train.carat, bins)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> m2.resid.groupby(grp, observed<span class="op">=</span><span class="va">True</span>).agg([<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;size&quot;</span>])</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> rb[rb[<span class="st">&quot;size&quot;</span>] <span class="op">&gt;=</span> <span class="dv">30</span>]</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].plot([iv.mid <span class="cf">for</span> iv <span class="kw">in</span> rb.index], rb[<span class="st">&quot;mean&quot;</span>], marker<span class="op">=</span><span class="st">&quot;o&quot;</span>, ms<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> (<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>):</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].axvline(t, color<span class="op">=</span><span class="st">&quot;gray&quot;</span>, ls<span class="op">=</span><span class="st">&quot;--&quot;</span>, lw<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Вага, ct&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Середній залишок (ln)&quot;</span>, title<span class="op">=</span><span class="st">&quot;(б) Середній залишок за вагою&quot;</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.stats <span class="im">as</span> st</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>st.probplot(m2.resid.sample(<span class="dv">4000</span>, random_state<span class="op">=</span>SEED), dist<span class="op">=</span><span class="st">&quot;norm&quot;</span>, plot<span class="op">=</span>ax[<span class="dv">2</span>])</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_title(<span class="st">&quot;(в) Q–Q графік залишків (4000 точок)&quot;</span>)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()<span class="op">;</span> savefig(<span class="st">&quot;04_m2_diagnostics&quot;</span>)<span class="op">;</span> plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].scatter(m2.fittedvalues, m2.resid, s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.08</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Прогноз ln(ціна)&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Залишок&quot;</span>, title<span class="op">=</span><span class="st">&quot;(а) Залишки проти прогнозів&quot;</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>weight_bins <span class="op">=</span> np.<span class="bu">round</span>(np.arange(<span class="fl">0.2</span>, <span class="fl">2.31</span>, <span class="fl">0.05</span>), <span class="dv">2</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>weight_group <span class="op">=</span> pd.cut(train[<span class="st">&quot;carat&quot;</span>], weight_bins)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>resid_by_weight <span class="op">=</span> m2.resid.groupby(weight_group, observed<span class="op">=</span><span class="va">True</span>).agg([<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;size&quot;</span>])</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>resid_by_weight <span class="op">=</span> resid_by_weight[resid_by_weight[<span class="st">&quot;size&quot;</span>] <span class="op">&gt;=</span> <span class="dv">30</span>]</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>bin_middle <span class="op">=</span> [interval.mid <span class="cf">for</span> interval <span class="kw">in</span> resid_by_weight.index]</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].plot(bin_middle, resid_by_weight[<span class="st">&quot;mean&quot;</span>], marker<span class="op">=</span><span class="st">&quot;o&quot;</span>, ms<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> weight <span class="kw">in</span> [<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>]:</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].axvline(weight, color<span class="op">=</span><span class="st">&quot;gray&quot;</span>, ls<span class="op">=</span><span class="st">&quot;--&quot;</span>, lw<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Вага, ct&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Середній залишок (ln)&quot;</span>, title<span class="op">=</span><span class="st">&quot;(б) Середній залишок за вагою&quot;</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>stats.probplot(m2.resid.sample(<span class="dv">4000</span>, random_state<span class="op">=</span>SEED), dist<span class="op">=</span><span class="st">&quot;norm&quot;</span>, plot<span class="op">=</span>ax[<span class="dv">2</span>])</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_title(<span class="st">&quot;(в) Q–Q графік залишків (4000 точок)&quot;</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>save_figure(<span class="st">&quot;04_m2_diagnostics&quot;</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-m2-diag" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -3018,23 +3068,33 @@ Figure 4: Діагностика M2. (а) Залишки проти прогн�
 <div id="cell-influence" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m2_plain <span class="op">=</span> smf.ols(<span class="st">&quot;log_price ~ log_carat + C(cut) + C(color) + C(clarity)&quot;</span>, data<span class="op">=</span>trc).fit()</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>bp1 <span class="op">=</span> het_breuschpagan(m1.resid, m1.model.exog)[<span class="dv">1</span>]</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>bp2 <span class="op">=</span> het_breuschpagan(m2_plain.resid, m2_plain.model.exog)[<span class="dv">1</span>]</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>infl <span class="op">=</span> OLSInfluence(m2_plain)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>cook <span class="op">=</span> infl.cooks_distance[<span class="dv">0</span>]</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>n_cook <span class="op">=</span> <span class="bu">int</span>((cook <span class="op">&gt;</span> <span class="dv">4</span> <span class="op">/</span> <span class="bu">len</span>(trc)).<span class="bu">sum</span>())</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>top <span class="op">=</span> np.argsort(cook)[<span class="op">-</span><span class="bu">int</span>(<span class="fl">0.01</span> <span class="op">*</span> <span class="bu">len</span>(trc)):]</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>m2_wo <span class="op">=</span> smf.ols(<span class="st">&quot;log_price ~ log_carat + C(cut) + C(color) + C(clarity)&quot;</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                data<span class="op">=</span>trc.drop(trc.index[top])).fit()</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>sd_ratio <span class="op">=</span> m1.resid[m1.fittedvalues <span class="op">&gt;</span> <span class="dv">10000</span>].std() <span class="op">/</span> m1.resid[m1.fittedvalues <span class="op">&lt;</span> <span class="dv">2000</span>].std()</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>KEY.update(n_cook<span class="op">=</span>n_cook, cook_max<span class="op">=</span>rnd(<span class="bu">float</span>(cook.<span class="bu">max</span>()), <span class="dv">4</span>),</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>           b1_wo<span class="op">=</span>rnd(m2_wo.params[<span class="st">&quot;log_carat&quot;</span>], <span class="dv">3</span>), sd_ratio<span class="op">=</span>rnd(sd_ratio, <span class="dv">1</span>))</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;перевірка&quot;</span>: [<span class="st">&quot;Breusch–Pagan, p (M1)&quot;</span>, <span class="st">&quot;Breusch–Pagan, p (M2)&quot;</span>,</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;Кук D &gt; 4/n, кількість&quot;</span>, <span class="st">&quot;Максимальна D Кука&quot;</span>,</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;β ln(carat) без 1 % найвпливовіших&quot;</span>],</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;значення&quot;</span>: [<span class="ss">f&quot;</span><span class="sc">{</span>bp1<span class="sc">:.1e}</span><span class="ss">&quot;</span>, <span class="ss">f&quot;</span><span class="sc">{</span>bp2<span class="sc">:.1e}</span><span class="ss">&quot;</span>, n_cook, rnd(<span class="bu">float</span>(cook.<span class="bu">max</span>()), <span class="dv">4</span>), KEY[<span class="st">&quot;b1_wo&quot;</span>]]})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m2_plain <span class="op">=</span> smf.ols(FORMULAS[<span class="st">&quot;M2&quot;</span>], data<span class="op">=</span>train).fit()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>bp_m1 <span class="op">=</span> het_breuschpagan(m1.resid, m1.model.exog)[<span class="dv">1</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>bp_m2 <span class="op">=</span> het_breuschpagan(m2_plain.resid, m2_plain.model.exog)[<span class="dv">1</span>]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>cook <span class="op">=</span> OLSInfluence(m2_plain).cooks_distance[<span class="dv">0</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>n_cook <span class="op">=</span> <span class="bu">int</span>((cook <span class="op">&gt;</span> <span class="dv">4</span> <span class="op">/</span> <span class="bu">len</span>(train)).<span class="bu">sum</span>())</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>n_top <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.01</span> <span class="op">*</span> <span class="bu">len</span>(train))</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>top_rows <span class="op">=</span> np.argsort(cook)[<span class="op">-</span>n_top:]</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>train_without_top <span class="op">=</span> train.drop(train.index[top_rows])</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>m2_without_top <span class="op">=</span> smf.ols(FORMULAS[<span class="st">&quot;M2&quot;</span>], data<span class="op">=</span>train_without_top).fit()</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>spread_expensive <span class="op">=</span> m1.resid[m1.fittedvalues <span class="op">&gt;</span> <span class="dv">10000</span>].std()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>spread_cheap <span class="op">=</span> m1.resid[m1.fittedvalues <span class="op">&lt;</span> <span class="dv">2000</span>].std()</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;n_cook&quot;</span>] <span class="op">=</span> n_cook</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;cook_max&quot;</span>] <span class="op">=</span> rnd(cook.<span class="bu">max</span>(), <span class="dv">4</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;b1_wo&quot;</span>] <span class="op">=</span> rnd(m2_without_top.params[<span class="st">&quot;log_carat&quot;</span>], <span class="dv">3</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;sd_ratio&quot;</span>] <span class="op">=</span> rnd(spread_expensive <span class="op">/</span> spread_cheap, <span class="dv">1</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;перевірка&quot;</span>: [<span class="st">&quot;Breusch–Pagan, p (M1)&quot;</span>, <span class="st">&quot;Breusch–Pagan, p (M2)&quot;</span>,</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;Кук D &gt; 4/n, кількість&quot;</span>, <span class="st">&quot;Максимальна D Кука&quot;</span>,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;β ln(carat) без 1 % найвпливовіших&quot;</span>],</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;значення&quot;</span>: [<span class="ss">f&quot;</span><span class="sc">{</span>bp_m1<span class="sc">:.1e}</span><span class="ss">&quot;</span>, <span class="ss">f&quot;</span><span class="sc">{</span>bp_m2<span class="sc">:.1e}</span><span class="ss">&quot;</span>, n_cook, KEY[<span class="st">&quot;cook_max&quot;</span>], KEY[<span class="st">&quot;b1_wo&quot;</span>]],</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="influence" class="cell-output cell-output-display" data-execution_count="10">
 <div>
@@ -3092,8 +3152,8 @@ Figure 4: Діагностика M2. (а) Залишки проти прогн�
 <h2 data-number="3.3" class="anchored" data-anchor-id="спроба-покращення"><span class="header-section-number">3.3</span> Спроба покращення</h2>
 <p><strong>Проблема:</strong> хвиля в залишках за вагою (<a href="#fig-m2-diag" class="quarto-xref">Figure 4</a> б). <strong>Модифікації:</strong></p>
 <ul>
-<li><strong>M3</strong> замінює <span class="math inline">\(\ln(carat)\)</span> на кубічний сплайн від <span class="math inline">\(\ln(carat)\)</span> (6 вузлів) і додає 4 порогові змінні <span class="math inline">\([carat \ge 0.5], [\ge 1], [\ge 1.5], [\ge 2]\)</span> з роботи Scott і Yelowitz.</li>
-<li><strong>M4</strong> додатково дозволяє надбавкам за колір і чистоту залежати від ваги (взаємодії <span class="math inline">\(\ln(carat)\times\)</span>color і <span class="math inline">\(\ln(carat)\times\)</span>clarity). У лабораторній №2 різниця в ціні між рівнями чистоти була більшою серед великих каменів.</li>
+<li><strong>M3</strong> замінює пряму <span class="math inline">\(\ln(carat)\)</span> на кубічний сплайн від <span class="math inline">\(\ln(carat)\)</span> (6 ступенів свободи, вузли за навчальною частиною) і додає 4 порогові змінні <span class="math inline">\([carat \ge 0.5], [\ge 1], [\ge 1.5], [\ge 2]\)</span> з роботи Scott і Yelowitz.</li>
+<li><strong>M4</strong> додатково дозволяє надбавці за колір залежати від чистоти (взаємодія color × clarity). У лабораторній №2 теплова карта медіанних цін «колір × чистота» для каменів 1 ct показала, що ці надбавки не просто додаються одна до одної.</li>
 </ul>
 <p>Ridge не розглядаю: предикторів лише ~20 на ~43 000 спостережень, мультиколінеарності між 4C немає, тож штраф майже не змінить коефіцієнтів.</p>
 </section>
@@ -3106,20 +3166,41 @@ Figure 4: Діагностика M2. (а) Залишки проти прогн�
 <div class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span>SEED)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>rows, folds <span class="op">=</span> [], {}</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, model <span class="kw">in</span> MODELS.items():</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> cross_validate(model, X_tr, y_tr, cv<span class="op">=</span>kf,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                       scoring<span class="op">=</span>[<span class="st">&quot;neg_mean_absolute_error&quot;</span>, <span class="st">&quot;neg_root_mean_squared_error&quot;</span>, <span class="st">&quot;r2&quot;</span>])</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    mae, rmse, r2 <span class="op">=</span> <span class="op">-</span>r[<span class="st">&quot;test_neg_mean_absolute_error&quot;</span>], <span class="op">-</span>r[<span class="st">&quot;test_neg_root_mean_squared_error&quot;</span>], r[<span class="st">&quot;test_r2&quot;</span>]</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    folds[name] <span class="op">=</span> mae</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    rows.append({<span class="st">&quot;модель&quot;</span>: name, <span class="st">&quot;MAE, $&quot;</span>: <span class="ss">f&quot;</span><span class="sc">{</span>mae<span class="sc">.</span>mean()<span class="sc">:.0f}</span><span class="ss"> ± </span><span class="sc">{</span>mae<span class="sc">.</span>std()<span class="sc">:.0f}</span><span class="ss">&quot;</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;RMSE, $&quot;</span>: <span class="ss">f&quot;</span><span class="sc">{</span>rmse<span class="sc">.</span>mean()<span class="sc">:.0f}</span><span class="ss"> ± </span><span class="sc">{</span>rmse<span class="sc">.</span>std()<span class="sc">:.0f}</span><span class="ss">&quot;</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;R²&quot;</span>: <span class="ss">f&quot;</span><span class="sc">{</span>r2<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss"> ± </span><span class="sc">{</span>r2<span class="sc">.</span>std()<span class="sc">:.3f}</span><span class="ss">&quot;</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;_mae&quot;</span>: mae.mean(), <span class="st">&quot;_sd&quot;</span>: mae.std(), <span class="st">&quot;_rmse&quot;</span>: rmse.mean()})</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> pd.DataFrame(rows)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>cv.drop(columns<span class="op">=</span>[<span class="st">&quot;_mae&quot;</span>, <span class="st">&quot;_sd&quot;</span>, <span class="st">&quot;_rmse&quot;</span>]).to_csv(<span class="st">&quot;results/cv_comparison.csv&quot;</span>, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>cv.drop(columns<span class="op">=</span>[<span class="st">&quot;_mae&quot;</span>, <span class="st">&quot;_sd&quot;</span>, <span class="st">&quot;_rmse&quot;</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>kfold <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span>SEED)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cv_rows <span class="op">=</span> []</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> code <span class="kw">in</span> MODEL_NAMES:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    mae_list <span class="op">=</span> []</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    rmse_list <span class="op">=</span> []</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    r2_list <span class="op">=</span> []</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> fit_index, valid_index <span class="kw">in</span> kfold.split(train):</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        fit_part <span class="op">=</span> train.iloc[fit_index]</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        valid_part <span class="op">=</span> train.iloc[valid_index]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        prediction <span class="op">=</span> predict_price(code, fit_part, valid_part)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        mae_list.append(mean_absolute_error(valid_part[<span class="st">&quot;price&quot;</span>], prediction))</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        rmse_list.append(root_mean_squared_error(valid_part[<span class="st">&quot;price&quot;</span>], prediction))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        r2_list.append(r2_score(valid_part[<span class="st">&quot;price&quot;</span>], prediction))</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    cv_rows.append({</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;code&quot;</span>: code,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;модель&quot;</span>: MODEL_NAMES[code],</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;mae&quot;</span>: np.mean(mae_list),</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;mae_sd&quot;</span>: np.std(mae_list),</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;rmse&quot;</span>: np.mean(rmse_list),</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;rmse_sd&quot;</span>: np.std(rmse_list),</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;r2&quot;</span>: np.mean(r2_list),</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;r2_sd&quot;</span>: np.std(r2_list),</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> pd.DataFrame(cv_rows).set_index(<span class="st">&quot;code&quot;</span>)</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>cv_table <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;модель&quot;</span>: cv[<span class="st">&quot;модель&quot;</span>],</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;MAE, $&quot;</span>: cv[<span class="st">&quot;mae&quot;</span>].<span class="bu">map</span>(<span class="st">&quot;</span><span class="sc">{:.0f}</span><span class="st">&quot;</span>.<span class="bu">format</span>) <span class="op">+</span> <span class="st">&quot; ± &quot;</span> <span class="op">+</span> cv[<span class="st">&quot;mae_sd&quot;</span>].<span class="bu">map</span>(<span class="st">&quot;</span><span class="sc">{:.0f}</span><span class="st">&quot;</span>.<span class="bu">format</span>),</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;RMSE, $&quot;</span>: cv[<span class="st">&quot;rmse&quot;</span>].<span class="bu">map</span>(<span class="st">&quot;</span><span class="sc">{:.0f}</span><span class="st">&quot;</span>.<span class="bu">format</span>) <span class="op">+</span> <span class="st">&quot; ± &quot;</span> <span class="op">+</span> cv[<span class="st">&quot;rmse_sd&quot;</span>].<span class="bu">map</span>(<span class="st">&quot;</span><span class="sc">{:.0f}</span><span class="st">&quot;</span>.<span class="bu">format</span>),</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;R²&quot;</span>: cv[<span class="st">&quot;r2&quot;</span>].<span class="bu">map</span>(<span class="st">&quot;</span><span class="sc">{:.3f}</span><span class="st">&quot;</span>.<span class="bu">format</span>) <span class="op">+</span> <span class="st">&quot; ± &quot;</span> <span class="op">+</span> cv[<span class="st">&quot;r2_sd&quot;</span>].<span class="bu">map</span>(<span class="st">&quot;</span><span class="sc">{:.3f}</span><span class="st">&quot;</span>.<span class="bu">format</span>),</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>cv_table.to_csv(<span class="st">&quot;results/cv_comparison.csv&quot;</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>cv_table.reset_index(drop<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-cv" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="11">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -3166,16 +3247,16 @@ Table 2: 5-кратна перехресна валідація на навча
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
 <td>M3 log–log + сплайн і пороги ваги</td>
-<td>371 ± 5</td>
-<td>708 ± 8</td>
+<td>370 ± 5</td>
+<td>706 ± 9</td>
 <td>0.969 ± 0.001</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
-<td>M4 = M3 + взаємодії вага×колір, вага×чистота</td>
-<td>326 ± 2</td>
-<td>614 ± 5</td>
-<td>0.976 ± 0.001</td>
+<td>M4 = M3 + взаємодія колір×чистота</td>
+<td>340 ± 3</td>
+<td>638 ± 4</td>
+<td>0.975 ± 0.000</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">5</th>
@@ -3196,36 +3277,37 @@ Table 2: 5-кратна перехресна валідація на навча
 <div id="cell-choice" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>order <span class="op">=</span> cv.sort_values(<span class="st">&quot;_mae&quot;</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>best <span class="op">=</span> order.loc[<span class="dv">0</span>]</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>chosen <span class="op">=</span> best[<span class="st">&quot;модель&quot;</span>]</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>simpler <span class="op">=</span> [m <span class="cf">for</span> m <span class="kw">in</span> MODELS <span class="cf">if</span> m <span class="op">!=</span> chosen <span class="kw">and</span> <span class="bu">list</span>(MODELS).index(m) <span class="op">&lt;</span> <span class="bu">list</span>(MODELS).index(chosen)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>           <span class="kw">and</span> <span class="st">&quot;M0&quot;</span> <span class="kw">not</span> <span class="kw">in</span> m]</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> m <span class="kw">in</span> simpler:</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cv.set_index(<span class="st">&quot;модель&quot;</span>).loc[m, <span class="st">&quot;_mae&quot;</span>] <span class="op">-</span> best[<span class="st">&quot;_mae&quot;</span>] <span class="op">&lt;</span> best[<span class="st">&quot;_sd&quot;</span>]:</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        chosen <span class="op">=</span> m</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>lin <span class="op">=</span> [m <span class="cf">for</span> m <span class="kw">in</span> order[<span class="st">&quot;модель&quot;</span>] <span class="cf">if</span> m[:<span class="dv">2</span>] <span class="kw">in</span> (<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>, <span class="st">&quot;M3&quot;</span>, <span class="st">&quot;M4&quot;</span>)][<span class="dv">0</span>]</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>cvi <span class="op">=</span> cv.set_index(<span class="st">&quot;модель&quot;</span>)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>KEY.update(chosen<span class="op">=</span>chosen, best_linear<span class="op">=</span>lin,</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>           cv<span class="op">=</span>cv[[<span class="st">&quot;модель&quot;</span>, <span class="st">&quot;_mae&quot;</span>, <span class="st">&quot;_sd&quot;</span>, <span class="st">&quot;_rmse&quot;</span>]].<span class="bu">round</span>(<span class="dv">1</span>).to_dict(<span class="st">&quot;records&quot;</span>))</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>gain_m3 <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> cvi.loc[<span class="st">&quot;M3 log–log + сплайн і пороги ваги&quot;</span>, <span class="st">&quot;_mae&quot;</span>] <span class="op">/</span> cvi.loc[<span class="st">&quot;M2 лінійна log–log&quot;</span>, <span class="st">&quot;_mae&quot;</span>]) <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>gain_m4 <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> cvi.loc[<span class="st">&quot;M4 = M3 + взаємодії вага×колір, вага×чистота&quot;</span>, <span class="st">&quot;_mae&quot;</span>]</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>           <span class="op">/</span> cvi.loc[<span class="st">&quot;M3 log–log + сплайн і пороги ваги&quot;</span>, <span class="st">&quot;_mae&quot;</span>]) <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>gain_gb <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> cvi.loc[<span class="st">&quot;M5 градієнтний бустинг (додатково)&quot;</span>, <span class="st">&quot;_mae&quot;</span>] <span class="op">/</span> cvi.loc[lin, <span class="st">&quot;_mae&quot;</span>]) <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>KEY.update(gain_m3<span class="op">=</span>rnd(gain_m3, <span class="dv">1</span>), gain_m4<span class="op">=</span>rnd(gain_m4, <span class="dv">1</span>), gain_gb<span class="op">=</span>rnd(gain_gb, <span class="dv">1</span>))</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="ss">f&quot;**Обрана модель (до відкриття тесту): </span><span class="sc">{</span>chosen<span class="sc">}</span><span class="ss">.** Найкраща лінійна модель: </span><span class="sc">{</span>lin<span class="sc">}</span><span class="ss">.&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>best <span class="op">=</span> cv[<span class="st">&quot;mae&quot;</span>].idxmin()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>chosen <span class="op">=</span> best</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> code <span class="kw">in</span> [<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>, <span class="st">&quot;M3&quot;</span>, <span class="st">&quot;M4&quot;</span>, <span class="st">&quot;M5&quot;</span>]:</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> code <span class="op">==</span> best:</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cv.loc[code, <span class="st">&quot;mae&quot;</span>] <span class="op">-</span> cv.loc[best, <span class="st">&quot;mae&quot;</span>] <span class="op">&lt;</span> cv.loc[best, <span class="st">&quot;mae_sd&quot;</span>]:</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        chosen <span class="op">=</span> code</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>best_linear <span class="op">=</span> cv.loc[[<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>, <span class="st">&quot;M3&quot;</span>, <span class="st">&quot;M4&quot;</span>], <span class="st">&quot;mae&quot;</span>].idxmin()</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;chosen&quot;</span>] <span class="op">=</span> MODEL_NAMES[chosen]</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;best_linear&quot;</span>] <span class="op">=</span> MODEL_NAMES[best_linear]</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;cv&quot;</span>] <span class="op">=</span> cv[[<span class="st">&quot;модель&quot;</span>, <span class="st">&quot;mae&quot;</span>, <span class="st">&quot;mae_sd&quot;</span>, <span class="st">&quot;rmse&quot;</span>]].<span class="bu">round</span>(<span class="dv">1</span>).to_dict(<span class="st">&quot;records&quot;</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;gain_m3&quot;</span>] <span class="op">=</span> rnd((<span class="dv">1</span> <span class="op">-</span> cv.loc[<span class="st">&quot;M3&quot;</span>, <span class="st">&quot;mae&quot;</span>] <span class="op">/</span> cv.loc[<span class="st">&quot;M2&quot;</span>, <span class="st">&quot;mae&quot;</span>]) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;gain_m4&quot;</span>] <span class="op">=</span> rnd((<span class="dv">1</span> <span class="op">-</span> cv.loc[<span class="st">&quot;M4&quot;</span>, <span class="st">&quot;mae&quot;</span>] <span class="op">/</span> cv.loc[<span class="st">&quot;M3&quot;</span>, <span class="st">&quot;mae&quot;</span>]) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;gain_gb&quot;</span>] <span class="op">=</span> rnd((<span class="dv">1</span> <span class="op">-</span> cv.loc[<span class="st">&quot;M5&quot;</span>, <span class="st">&quot;mae&quot;</span>] <span class="op">/</span> cv.loc[best_linear, <span class="st">&quot;mae&quot;</span>]) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="st">&quot;**Обрана модель (до відкриття тесту): &quot;</span> <span class="op">+</span> MODEL_NAMES[chosen] <span class="op">+</span> <span class="st">&quot;.** &quot;</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>         <span class="op">+</span> <span class="st">&quot;Найкраща лінійна модель: &quot;</span> <span class="op">+</span> MODEL_NAMES[best_linear] <span class="op">+</span> <span class="st">&quot;.&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="choice" class="cell-output cell-output-display cell-output-markdown" data-execution_count="12">
-<p><strong>Обрана модель (до відкриття тесту): M5 градієнтний бустинг (додатково).</strong> Найкраща лінійна модель: M4 = M3 + взаємодії вага×колір, вага×чистота.</p>
+<p><strong>Обрана модель (до відкриття тесту): M5 градієнтний бустинг (додатково).</strong> Найкраща лінійна модель: M4 = M3 + взаємодія колір×чистота.</p>
 </div>
 </div>
 <p><strong>Що показала валідація:</strong></p>
 <ul>
 <li>Усі регресії значно кращі за орієнтир M0. Перехід до логарифмів (M1 → M2) зменшує MAE приблизно вдвічі. Отже, форма зв’язку важить більше за вибір предикторів.</li>
-<li><strong>Сплайн і пороги (M3)</strong> зменшують MAE ще на 8.1 % порівняно з M2, різниця набагато більша за розкид між розбиттями. Модифікація розв’язала проблему, яку показала діагностика.</li>
-<li><strong>Взаємодії (M4)</strong> зменшують MAE ще на 12.1 % порівняно з M3.</li>
-<li><strong>Бустинг (M5)</strong> точніший за найкращу лінійну модель на 11.5 %, але не має коефіцієнтів. Тому гіпотези перевіряю в M2, а для прогнозу беру модель за правилом вибору.</li>
+<li><strong>Сплайн і пороги (M3)</strong> зменшують MAE ще на 8.4 % порівняно з M2, різниця набагато більша за розкид між розбиттями. Модифікація розв’язала проблему, яку показала діагностика.</li>
+<li><strong>Взаємодія колір × чистота (M4)</strong> зменшує MAE ще на 8.1 % порівняно з M3.</li>
+<li><strong>Бустинг (M5)</strong> точніший за найкращу лінійну модель на 15.0 %, але не має коефіцієнтів. Тому гіпотези перевіряю в M2, а для прогнозу беру модель за правилом вибору.</li>
 </ul>
 </section>
 <section id="фінальна-оцінка-на-тесті" class="level2" data-number="3.6">
@@ -3233,20 +3315,28 @@ Table 2: 5-кратна перехресна валідація на навча
 <div class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>final <span class="op">=</span> {}</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> <span class="bu">dict</span>.fromkeys([<span class="st">&quot;M0 константа (середнє)&quot;</span>, chosen, lin]):</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> MODELS[name].fit(X_tr, y_tr)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> m.predict(X_te)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    final[name] <span class="op">=</span> p</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>test_rows <span class="op">=</span> [{<span class="st">&quot;модель&quot;</span>: n, <span class="st">&quot;MAE, $&quot;</span>: rnd(mean_absolute_error(y_te, p)),</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;RMSE, $&quot;</span>: rnd(root_mean_squared_error(y_te, p)),</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;R²&quot;</span>: rnd(r2_score(y_te, p), <span class="dv">3</span>),</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;медіана |помилки| / ціна, %&quot;</span>: rnd(np.median(np.<span class="bu">abs</span>(y_te <span class="op">-</span> p) <span class="op">/</span> y_te) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)}</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>             <span class="cf">for</span> n, p <span class="kw">in</span> final.items()]</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>tt <span class="op">=</span> pd.DataFrame(test_rows)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>tt.to_csv(<span class="st">&quot;results/test_metrics.csv&quot;</span>, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;test&quot;</span>] <span class="op">=</span> tt.to_dict(<span class="st">&quot;records&quot;</span>)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>tt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>test_models <span class="op">=</span> [<span class="st">&quot;M0&quot;</span>, chosen]</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> best_linear <span class="op">!=</span> chosen:</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    test_models.append(best_linear)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="op">=</span> {}</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>test_rows <span class="op">=</span> []</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> code <span class="kw">in</span> test_models:</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    prediction <span class="op">=</span> predict_price(code, train, test)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    test_predictions[code] <span class="op">=</span> prediction</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    relative_error <span class="op">=</span> np.<span class="bu">abs</span>(test[<span class="st">&quot;price&quot;</span>] <span class="op">-</span> prediction) <span class="op">/</span> test[<span class="st">&quot;price&quot;</span>] <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    test_rows.append({</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;модель&quot;</span>: MODEL_NAMES[code],</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;MAE, $&quot;</span>: rnd(mean_absolute_error(test[<span class="st">&quot;price&quot;</span>], prediction)),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RMSE, $&quot;</span>: rnd(root_mean_squared_error(test[<span class="st">&quot;price&quot;</span>], prediction)),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;R²&quot;</span>: rnd(r2_score(test[<span class="st">&quot;price&quot;</span>], prediction), <span class="dv">3</span>),</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;медіана |помилки| / ціна, %&quot;</span>: rnd(np.median(relative_error), <span class="dv">1</span>),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>test_table <span class="op">=</span> pd.DataFrame(test_rows)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>test_table.to_csv(<span class="st">&quot;results/test_metrics.csv&quot;</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;test&quot;</span>] <span class="op">=</span> test_table.to_dict(<span class="st">&quot;records&quot;</span>)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>test_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-test" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -3288,11 +3378,11 @@ Table 3: Одноразова оцінка на тестовій частині
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
-<td>M4 = M3 + взаємодії вага×колір, вага×чистота</td>
-<td>327</td>
-<td>610</td>
-<td>0.976</td>
-<td>7.2</td>
+<td>M4 = M3 + взаємодія колір×чистота</td>
+<td>341</td>
+<td>637</td>
+<td>0.974</td>
+<td>7.4</td>
 </tr>
 </tbody>
 </table>
@@ -3306,27 +3396,35 @@ Table 3: Одноразова оцінка на тестовій частині
 <div class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pred <span class="op">=</span> final[chosen]</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>err <span class="op">=</span> test.assign(pred<span class="op">=</span>pred, abs_err<span class="op">=</span>np.<span class="bu">abs</span>(test.price <span class="op">-</span> pred),</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                  rel_err<span class="op">=</span>np.<span class="bu">abs</span>(test.price <span class="op">-</span> pred) <span class="op">/</span> test.price <span class="op">*</span> <span class="dv">100</span>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>err[<span class="st">&quot;група ваги&quot;</span>] <span class="op">=</span> pd.cut(err.carat, [<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>, <span class="fl">5.1</span>],</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                           labels<span class="op">=</span>[<span class="st">&quot;до 0.5&quot;</span>, <span class="st">&quot;0.5–0.75&quot;</span>, <span class="st">&quot;0.75–1&quot;</span>, <span class="st">&quot;1–1.5&quot;</span>, <span class="st">&quot;1.5–2&quot;</span>, <span class="st">&quot;понад 2&quot;</span>])</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="fl">4.8</span>))</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].scatter(err.price, err.pred, s<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">0.15</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>lim <span class="op">=</span> [<span class="dv">300</span>, <span class="dv">20000</span>]</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].plot(lim, lim, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(xscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, yscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, xlim<span class="op">=</span>lim, ylim<span class="op">=</span>lim, xlabel<span class="op">=</span><span class="st">&quot;Фактична ціна, $&quot;</span>,</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>          ylabel<span class="op">=</span><span class="st">&quot;Прогноз, $&quot;</span>, title<span class="op">=</span><span class="ss">f&quot;Фактичне і прогноз: </span><span class="sc">{</span>chosen<span class="sc">.</span>split(<span class="st">&#39; &#39;</span>)[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>err, x<span class="op">=</span><span class="st">&quot;група ваги&quot;</span>, y<span class="op">=</span><span class="st">&quot;abs_err&quot;</span>, ax<span class="op">=</span>ax[<span class="dv">1</span>], showfliers<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">&quot;lightblue&quot;</span>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Вага, ct&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;|помилка|, $&quot;</span>, title<span class="op">=</span><span class="st">&quot;Абсолютна помилка за вагою&quot;</span>)</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()<span class="op">;</span> savefig(<span class="st">&quot;05_test_pred&quot;</span>)<span class="op">;</span> plt.show()</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>by <span class="op">=</span> err.groupby(<span class="st">&quot;група ваги&quot;</span>, observed<span class="op">=</span><span class="va">True</span>).agg(</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>(<span class="st">&quot;price&quot;</span>, <span class="st">&quot;size&quot;</span>), median_price<span class="op">=</span>(<span class="st">&quot;price&quot;</span>, <span class="st">&quot;median&quot;</span>),</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    MAE<span class="op">=</span>(<span class="st">&quot;abs_err&quot;</span>, <span class="st">&quot;mean&quot;</span>), median_rel_err<span class="op">=</span>(<span class="st">&quot;rel_err&quot;</span>, <span class="st">&quot;median&quot;</span>)).<span class="bu">round</span>(<span class="dv">1</span>)</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>by.to_csv(<span class="st">&quot;results/test_errors_by_carat.csv&quot;</span>)</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;by_carat&quot;</span>] <span class="op">=</span> by.reset_index().astype({<span class="st">&quot;група ваги&quot;</span>: <span class="bu">str</span>}).to_dict(<span class="st">&quot;records&quot;</span>)</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>by.rename(columns<span class="op">=</span>{<span class="st">&quot;n&quot;</span>: <span class="st">&quot;каменів&quot;</span>, <span class="st">&quot;median_price&quot;</span>: <span class="st">&quot;медіана ціни, $&quot;</span>,</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;MAE&quot;</span>: <span class="st">&quot;MAE, $&quot;</span>, <span class="st">&quot;median_rel_err&quot;</span>: <span class="st">&quot;медіана відн. помилки, %&quot;</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>err <span class="op">=</span> test.copy()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>err[<span class="st">&quot;pred&quot;</span>] <span class="op">=</span> test_predictions[chosen]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>err[<span class="st">&quot;abs_err&quot;</span>] <span class="op">=</span> np.<span class="bu">abs</span>(err[<span class="st">&quot;price&quot;</span>] <span class="op">-</span> err[<span class="st">&quot;pred&quot;</span>])</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>err[<span class="st">&quot;rel_err&quot;</span>] <span class="op">=</span> err[<span class="st">&quot;abs_err&quot;</span>] <span class="op">/</span> err[<span class="st">&quot;price&quot;</span>] <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>err[<span class="st">&quot;група ваги&quot;</span>] <span class="op">=</span> pd.cut(err[<span class="st">&quot;carat&quot;</span>], [<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>, <span class="fl">5.1</span>],</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                           labels<span class="op">=</span>[<span class="st">&quot;до 0.5&quot;</span>, <span class="st">&quot;0.5–0.75&quot;</span>, <span class="st">&quot;0.75–1&quot;</span>, <span class="st">&quot;1–1.5&quot;</span>, <span class="st">&quot;1.5–2&quot;</span>, <span class="st">&quot;понад 2&quot;</span>])</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="fl">4.8</span>))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].scatter(err[<span class="st">&quot;price&quot;</span>], err[<span class="st">&quot;pred&quot;</span>], s<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">0.15</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].plot([<span class="dv">300</span>, <span class="dv">20000</span>], [<span class="dv">300</span>, <span class="dv">20000</span>], color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].<span class="bu">set</span>(xscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, yscale<span class="op">=</span><span class="st">&quot;log&quot;</span>, xlim<span class="op">=</span>[<span class="dv">300</span>, <span class="dv">20000</span>], ylim<span class="op">=</span>[<span class="dv">300</span>, <span class="dv">20000</span>],</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>          xlabel<span class="op">=</span><span class="st">&quot;Фактична ціна, $&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;Прогноз, $&quot;</span>, title<span class="op">=</span><span class="st">&quot;Фактичне і прогноз: &quot;</span> <span class="op">+</span> chosen)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>err, x<span class="op">=</span><span class="st">&quot;група ваги&quot;</span>, y<span class="op">=</span><span class="st">&quot;abs_err&quot;</span>, ax<span class="op">=</span>ax[<span class="dv">1</span>], showfliers<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">&quot;lightblue&quot;</span>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">&quot;Вага, ct&quot;</span>, ylabel<span class="op">=</span><span class="st">&quot;|помилка|, $&quot;</span>, title<span class="op">=</span><span class="st">&quot;Абсолютна помилка за вагою&quot;</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>save_figure(<span class="st">&quot;05_test_pred&quot;</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>by_weight <span class="op">=</span> err.groupby(<span class="st">&quot;група ваги&quot;</span>, observed<span class="op">=</span><span class="va">True</span>).agg(</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>(<span class="st">&quot;price&quot;</span>, <span class="st">&quot;size&quot;</span>),</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    median_price<span class="op">=</span>(<span class="st">&quot;price&quot;</span>, <span class="st">&quot;median&quot;</span>),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    MAE<span class="op">=</span>(<span class="st">&quot;abs_err&quot;</span>, <span class="st">&quot;mean&quot;</span>),</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    median_rel_err<span class="op">=</span>(<span class="st">&quot;rel_err&quot;</span>, <span class="st">&quot;median&quot;</span>),</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>).<span class="bu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>by_weight.to_csv(<span class="st">&quot;results/test_errors_by_carat.csv&quot;</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;by_carat&quot;</span>] <span class="op">=</span> by_weight.reset_index().astype({<span class="st">&quot;група ваги&quot;</span>: <span class="bu">str</span>}).to_dict(<span class="st">&quot;records&quot;</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>by_weight.rename(columns<span class="op">=</span>{<span class="st">&quot;n&quot;</span>: <span class="st">&quot;каменів&quot;</span>, <span class="st">&quot;median_price&quot;</span>: <span class="st">&quot;медіана ціни, $&quot;</span>,</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>                          <span class="st">&quot;MAE&quot;</span>: <span class="st">&quot;MAE, $&quot;</span>, <span class="st">&quot;median_rel_err&quot;</span>: <span class="st">&quot;медіана відн. помилки, %&quot;</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="fig-test" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="14">
 <figure class="quarto-float quarto-float-fig figure">
@@ -3429,12 +3527,16 @@ Figure 5
 <div id="cell-worst" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> err[err.price <span class="op">&gt;</span> <span class="dv">15000</span>]</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>KEY.update(mae_cap<span class="op">=</span>rnd(cap.abs_err.mean()), n_cap<span class="op">=</span><span class="bu">len</span>(cap),</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>           share_big_err<span class="op">=</span>rnd(err.loc[err.carat <span class="op">&gt;=</span> <span class="fl">1.5</span>, <span class="st">&quot;abs_err&quot;</span>].<span class="bu">sum</span>() <span class="op">/</span> err.abs_err.<span class="bu">sum</span>() <span class="op">*</span> <span class="dv">100</span>),</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>           share_big_n<span class="op">=</span>rnd((err.carat <span class="op">&gt;=</span> <span class="fl">1.5</span>).mean() <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>worst <span class="op">=</span> err.sort_values(<span class="st">&quot;abs_err&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">6</span>)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>worst[[<span class="st">&quot;carat&quot;</span>, <span class="st">&quot;cut&quot;</span>, <span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>, <span class="st">&quot;price&quot;</span>, <span class="st">&quot;pred&quot;</span>, <span class="st">&quot;abs_err&quot;</span>]].<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>expensive <span class="op">=</span> err[err[<span class="st">&quot;price&quot;</span>] <span class="op">&gt;</span> <span class="dv">15000</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>big_stones <span class="op">=</span> err[err[<span class="st">&quot;carat&quot;</span>] <span class="op">&gt;=</span> <span class="fl">1.5</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;n_cap&quot;</span>] <span class="op">=</span> <span class="bu">len</span>(expensive)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;mae_cap&quot;</span>] <span class="op">=</span> rnd(expensive[<span class="st">&quot;abs_err&quot;</span>].mean())</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;share_big_n&quot;</span>] <span class="op">=</span> rnd(<span class="bu">len</span>(big_stones) <span class="op">/</span> <span class="bu">len</span>(err) <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>KEY[<span class="st">&quot;share_big_err&quot;</span>] <span class="op">=</span> rnd(big_stones[<span class="st">&quot;abs_err&quot;</span>].<span class="bu">sum</span>() <span class="op">/</span> err[<span class="st">&quot;abs_err&quot;</span>].<span class="bu">sum</span>() <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>worst <span class="op">=</span> err.sort_values(<span class="st">&quot;abs_err&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">6</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>worst[[<span class="st">&quot;carat&quot;</span>, <span class="st">&quot;cut&quot;</span>, <span class="st">&quot;color&quot;</span>, <span class="st">&quot;clarity&quot;</span>, <span class="st">&quot;price&quot;</span>, <span class="st">&quot;pred&quot;</span>, <span class="st">&quot;abs_err&quot;</span>]].<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="worst" class="cell-output cell-output-display" data-execution_count="15">
 <div>
@@ -3524,15 +3626,15 @@ Figure 5
 <div id="save-key" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Код</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;results/key_numbers.json&quot;</span>, <span class="st">&quot;w&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> f:</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    json.dump(KEY, f, ensure_ascii<span class="op">=</span><span class="va">False</span>, indent<span class="op">=</span><span class="dv">2</span>, default<span class="op">=</span><span class="bu">str</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;results/key_numbers.json&quot;</span>, <span class="st">&quot;w&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> <span class="bu">file</span>:</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    json.dump(KEY, <span class="bu">file</span>, ensure_ascii<span class="op">=</span><span class="va">False</span>, indent<span class="op">=</span><span class="dv">2</span>, default<span class="op">=</span><span class="bu">str</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
 </section>
 <section id="обговорення-й-висновки" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Обговорення й висновки</h1>
-<p><strong>Відповідь на дослідницьке питання.</strong> Чотири характеристики з сертифіката прогнозують ціну нового діаманта з того самого ринку дуже добре. Обрана модель на тесті помиляється в середньому на 289 $, тоді як константний прогноз — на 2 990 $. Типова (медіанна) відносна помилка становить 6.2 %. Найкраща лінійна модель трохи гірша (MAE 327 $), зате пояснює, як саме 4C пов’язані з ціною.</p>
+<p><strong>Відповідь на дослідницьке питання.</strong> Чотири характеристики з сертифіката прогнозують ціну нового діаманта з того самого ринку дуже добре. Обрана модель на тесті помиляється в середньому на 289 $, тоді як константний прогноз — на 2 990 $. Типова (медіанна) відносна помилка становить 6.2 %. Найкраща лінійна модель трохи гірша (MAE 341 $), зате пояснює, як саме 4C пов’язані з ціною.</p>
 <p><strong>H1 (вага).</strong> Еластичність 1.884, 95 % ДІ 1.881–1.887. Інтервал вузький і цілком лежить вище 1, тож за сталих інших C ціна зростає з вагою швидше, ніж пропорційно. Дані <strong>узгоджуються з H1</strong>. Оцінка більша за нахил 1.68 з лабораторної №2, бо там вага не була «очищена» від якості: великі камені частіше мають гіршу чистоту й колір. Застереження: діагностика показала, що еластичність не стала (стрибки на круглих вагах), а гіпотеза походить з EDA, тож результат розвідувальний.</p>
 <p><strong>H2 (чистота).</strong> Усі 7 коефіцієнтів чистоти додатні, з вузькими ДІ, і зростають від SI2 до IF (монотонно). Надбавка IF над I1 становить 204 % (95 % ДІ 198–211 %), що більше за 100 %. Дані <strong>узгоджуються з H2</strong> (так само розвідувально).</p>
 <p><strong>Якість прогнозу на нових даних.</strong> Різниця між MAE на перехресній валідації й на тесті мала, отже модель не перенавчена. Однак тест не повністю незалежний: рішення про логарифми й набір предикторів я ухвалив після EDA всього набору.</p>

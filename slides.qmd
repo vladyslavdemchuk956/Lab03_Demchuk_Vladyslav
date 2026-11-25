@@ -66,7 +66,7 @@ short = lambda t: t.split(" ")[0]
 ```{python}
 cvt = pd.read_csv("results/cv_comparison.csv")
 cvt["модель"] = ["M0 константа", "M1 лінійна, $", "M2 log–log", "M3 + сплайн і пороги", "M4 + колір×чистота", "M5 бустинг"]
-cvt.style.hide(axis="index")
+cvt.style.hide(axis="index").format(precision=0, subset=["MAE, $", "± MAE", "RMSE, $", "± RMSE"]).format(precision=3, subset=["R²"])
 ```
 
 Правило (зафіксоване до тесту): найменший середній MAE → **`{python} K["chosen"]`**; для інтерпретації — найкраща лінійна **M4**

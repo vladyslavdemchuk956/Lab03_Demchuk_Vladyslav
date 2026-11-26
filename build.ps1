@@ -17,5 +17,7 @@ $env:TMP = $tmp; $env:TEMP = $tmp; $env:LOCALAPPDATA = "$tmp\local"
 
 & $quarto render
 if ($LASTEXITCODE -ne 0) { throw 'Збирання не вдалося' }
+& $env:QUARTO_PYTHON make_notebook.py $quarto
+if ($LASTEXITCODE -ne 0) { throw 'Ноутбук не зібрався' }
 Start-Process (Join-Path $PSScriptRoot 'report.html')
-Write-Host 'Готово: report.html і slides.html оновлено.'
+Write-Host 'Готово: report.html, slides.html і report.ipynb оновлено.'

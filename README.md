@@ -50,7 +50,9 @@
    Збирання триває ≈ 30 с. Усі випадкові кроки мають `seed = 42`.
 
    **Windows, одна команда:** `powershell -ExecutionPolicy Bypass -File .\build.ps1` — скрипт сам знайде
-   Quarto і Python (або `.venv`), збере звіт і слайди та відкриє `report.html`.
+   Quarto і Python (або `.venv`), збере звіт і слайди, зробить `report.ipynb` і відкриє `report.html`.
+4. Ноутбук `report.ipynb` (той самий звіт для Jupyter / VS Code, з виконаними клітинками й підставленими
+   числами в тексті) робить `python make_notebook.py` після `quarto render`.
 
 > Якщо Quarto бере не той Python, вкажіть його явно: `set QUARTO_PYTHON=.venv\Scripts\python.exe`
 > (macOS/Linux: `export QUARTO_PYTHON=.venv/bin/python`).

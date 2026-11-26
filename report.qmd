@@ -14,6 +14,16 @@ format:
     embed-resources: true
     df-print: kable
     fig-dpi: 120
+crossref:
+  fig-title: "Рисунок"
+  tbl-title: "Таблиця"
+  fig-prefix: "рис."
+  tbl-prefix: "табл."
+language:
+  title-block-author-single: "Автор"
+  title-block-published: "Дата"
+  callout-warning-title: "Увага"
+  section-title-references: "Бібліографія"
 bibliography: references.bib
 nocite: |
   @james2023, @nist, @kuhn2022, @sandve2013
@@ -147,7 +157,7 @@ print("SHA-256 файлу:", sha)
 ```
 
 - **Джерело:** набір `diamonds` з пакета ggplot2 [@ggplot2], файл `data-raw/diamonds.csv` з репозиторію
-  tidyverse/ggplot2 (гілка `main`), отримано **листопад 2026**. Контрольна сума SHA-256 файлу
+  tidyverse/ggplot2 (гілка `main`), отримано **в листопаді 2026**. Контрольна сума SHA-256 файлу
   `{python} sha[:16]`… записана в звіті, тож ту саму версію можна перевірити.
 - **Умови використання:** ліцензія MIT пакета ggplot2; дані відкриті.
 - **Розмір:** `{python} f"{len(raw):,}".replace(",", " ")` рядків і 10 змінних; після очищення
@@ -351,6 +361,7 @@ coef["надбавка, %"] = (np.exp(m2.params) - 1) * 100
 coef.loc["Intercept", "надбавка, %"] = np.nan
 coef.loc["log_carat", "надбавка, %"] = np.nan
 coef = coef.round(3)
+coef = coef.fillna("—")
 coef.to_csv("results/m2_coefficients.csv")
 
 b1 = float(m2.params["log_carat"])
@@ -418,6 +429,8 @@ ax[1].set_ylabel("Середній залишок (ln)")
 
 stats.probplot(m2.resid.sample(4000, random_state=42), dist="norm", plot=ax[2])
 ax[2].set_title("(в) Q–Q графік залишків (4000 точок)")
+ax[2].set_xlabel("Теоретичні квантилі (нормальний розподіл)")
+ax[2].set_ylabel("Квантилі залишків")
 
 plt.tight_layout()
 plt.savefig("figures/04_m2_diagnostics.png", dpi=150, bbox_inches="tight")
@@ -447,8 +460,8 @@ numbers["cook_max"] = round(float(cook.max()), 4)
 numbers["b1_wo"] = round(float(m2_without_top.params["log_carat"]), 3)
 numbers["sd_ratio"] = round(float(spread_expensive / spread_cheap), 1)
 
-print("Breusch–Pagan, p (M1):", bp_m1)
-print("Breusch–Pagan, p (M2):", bp_m2)
+print("Breusch–Pagan, p (M1):", f"{bp_m1:.1e}")
+print("Breusch–Pagan, p (M2):", f"{bp_m2:.1e}")
 print("Точок з D Кука > 4/n:", n_cook)
 print("Максимальна D Кука:", numbers["cook_max"])
 print("β ln(carat) без 1 % найвпливовіших точок:", numbers["b1_wo"])
@@ -544,7 +557,12 @@ for name in model_names:
 
 cv_table = pd.DataFrame(rows).set_index("код")
 
-cv_rounded = cv_table.round({"MAE, $": 0, "± MAE": 0, "RMSE, $": 0, "± RMSE": 0, "R²": 3})
+cv_rounded = cv_table.copy()
+cv_rounded["MAE, $"] = cv_rounded["MAE, $"].round().astype(int)
+cv_rounded["± MAE"] = cv_rounded["± MAE"].round().astype(int)
+cv_rounded["RMSE, $"] = cv_rounded["RMSE, $"].round().astype(int)
+cv_rounded["± RMSE"] = cv_rounded["± RMSE"].round().astype(int)
+cv_rounded["R²"] = cv_rounded["R²"].round(3)
 cv_rounded.to_csv("results/cv_comparison.csv", index=False)
 cv_rounded
 ```
@@ -646,6 +664,11 @@ plt.tight_layout()
 plt.savefig("figures/05_test_pred.png", dpi=150, bbox_inches="tight")
 plt.show()
 
+```
+
+```{python}
+#| label: tbl-test-groups
+#| tbl-cap: "Помилки обраної моделі на тесті за групами ваги."
 by_weight = err.groupby("група ваги", observed=True).agg(
     n=("price", "size"),
     median_price=("price", "median"),
@@ -655,16 +678,16 @@ by_weight = err.groupby("група ваги", observed=True).agg(
 by_weight = by_weight.round(1)
 by_weight.to_csv("results/test_errors_by_carat.csv")
 
-small = by_weight.iloc[0]
-large = by_weight.iloc[-1]
-numbers["rel_err_small"] = float(small["median_rel_err"])
-numbers["rel_err_large"] = float(large["median_rel_err"])
+numbers["rel_err_small"] = float(by_weight["median_rel_err"].iloc[0])
+numbers["rel_err_large"] = float(by_weight["median_rel_err"].iloc[-1])
 
+by_weight.columns = ["каменів", "медіана ціни, $", "MAE, $", "медіана відн. помилки, %"]
 by_weight
 ```
 
 ```{python}
-#| label: worst
+#| label: tbl-worst
+#| tbl-cap: "Шість каменів тесту з найбільшою помилкою обраної моделі."
 expensive = err[err["price"] > 15000]
 big_stones = err[err["carat"] >= 1.5]
 
@@ -674,7 +697,11 @@ numbers["share_big_n"] = round(len(big_stones) / len(err) * 100)
 numbers["share_big_err"] = round(float(big_stones["abs_err"].sum() / err["abs_err"].sum()) * 100)
 
 worst = err.sort_values("abs_err", ascending=False).head(6)
-worst[["carat", "cut", "color", "clarity", "price", "pred", "abs_err"]].round(0)
+worst = worst[["carat", "cut", "color", "clarity", "price", "pred", "abs_err"]]
+worst["pred"] = worst["pred"].round().astype(int)
+worst["abs_err"] = worst["abs_err"].round().astype(int)
+worst.columns = ["вага, ct", "огранка", "колір", "чистота", "ціна, $", "прогноз, $", "|помилка|, $"]
+worst
 ```
 
 **Де помилки найбільші.** У доларах помилка росте з вагою й ціною: камені від 1.5 ct становлять

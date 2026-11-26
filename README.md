@@ -10,13 +10,17 @@
 
 | Файл | Що це |
 | --- | --- |
-| `report.qmd` | виконуваний звіт Quarto: увесь код, текст і бібліографія (він же ноутбук) |
+| `report.qmd` | виконуваний звіт Quarto: увесь код, текст і бібліографія |
 | `report.html` | зібраний звіт (відкривається в будь-якому браузері, усе вбудовано) |
-| `slides.qmd` → `slides.html` | презентація Quarto Revealjs (стрілки ← → для гортання, `F` — на весь екран) |
+| `report.ipynb` | той самий звіт як ноутбук Jupyter, з виконаними клітинками (Run All у VS Code / Jupyter) |
+| `slides.qmd` → `slides.html` | презентація Quarto Revealjs (стрілки ← → для гортання, `F` — на весь екран); стиль — `slides.css` |
 | `figures/` | графіки (створює `report.qmd`) |
 | `results/` | таблиці CSV і `key_numbers.json` (створює `report.qmd`, з них будуються слайди) |
 | `data/raw/diamonds.csv` | вихідні дані без змін |
 | `references.bib` | бібліографія |
+| `_quarto.yml` | порядок збирання: спершу звіт, потім слайди |
+| `build.ps1` | збирання всього однією командою (Windows) |
+| `make_notebook.py` | робить `report.ipynb` з `report.qmd` |
 
 ## Версії
 
